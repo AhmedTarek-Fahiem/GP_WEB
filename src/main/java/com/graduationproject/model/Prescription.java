@@ -23,8 +23,8 @@ public class Prescription implements Serializable {
     private String id = UUID.randomUUID().toString();
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date prescription_date;
+//    @Temporal(TemporalType.TIMESTAMP)
+    private long prescription_date;
 
     @Column(columnDefinition = "DOUBLE", nullable = false)
     private Double price;
@@ -42,7 +42,7 @@ public class Prescription implements Serializable {
     @JoinColumn(table = "patient", name = "id")
 //    @GeneratedValue(generator = "UUID")
 //    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(columnDefinition = "BINARY(16)", updatable = false, nullable = false)
+    @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private String patient_id;
 
 
@@ -55,11 +55,11 @@ public class Prescription implements Serializable {
         this.id = id;
     }
 
-    public Date getPrescription_date() {
+    public long getPrescription_date() {
         return prescription_date;
     }
 
-    public void setPrescription_date(Date prescription_date) {
+    public void setPrescription_date(long prescription_date) {
         this.prescription_date = prescription_date;
     }
 
@@ -79,11 +79,11 @@ public class Prescription implements Serializable {
         this.history_id = history_id;
     }
 
-    public String getUser_id() {
+    public String getPatient_id() {
         return patient_id;
     }
 
-    public void setUser_id(String patient_id) {
+    public void setPatient_id(String patient_id) {
         this.patient_id = patient_id;
     }
 }

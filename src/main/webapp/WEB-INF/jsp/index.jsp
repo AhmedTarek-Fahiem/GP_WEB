@@ -19,12 +19,9 @@
     <title>Welcome</title>
 
     <!-- Bootstrap core CSS -->
-    <%--<link href="WEB-INF/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">--%>
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <%--<link rel="stylesheet" href="WEB-INF/resources/vendor/font-awesome/css/font-awesome.min.css">--%>
-    <%--<link rel="stylesheet" href="WEB-INF/resources/vendor/simple-line-icons/css/simple-line-icons.css">--%>
     <link rel="stylesheet" href="<c:url value="/resources/vendor/font-awesome/css/font-awesome.min.css"/>">
     <link rel="stylesheet" href="<c:url value="/resources/vendor/simple-line-icons/css/simple-line-icons.css"/>">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -32,11 +29,9 @@
     <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
 
     <!-- Plugin CSS -->
-    <%--<link rel="stylesheet" href="WEB-INF/resources/device-mockups/device-mockups.min.css">--%>
     <link rel="stylesheet" href="<c:url value="/resources/device-mockups/device-mockups.min.css"/>">
 
     <!-- Custom styles for this template -->
-    <%--<link href="WEB-INF/resources/css/new-age.min.css" rel="stylesheet">--%>
     <link href="<c:url value="/resources/css/new-age.min.css"/>" rel="stylesheet">
 
 </head>
@@ -105,7 +100,6 @@
                     <h2 class="section-heading">Discover what all the buzz is about!</h2>
                     <p>Download now to get started!</p>
                     <div class="badges">
-                        <%--<a class="badge-link" href="#"><img src="WEB-INF/resources/img/google-play-badge.svg" alt=""></a>--%>
                         <a class="badge-link" href="#"><img src="<c:url value="/resources/img/google-play-badge.svg"/>" alt=""></a>
                     </div>
                 </div>
@@ -183,21 +177,11 @@
         </div>
     </footer>
 
-    <%--<link href="WEB-INF/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">--%>
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
-
-    <!-- Bootstrap core JavaScript -->
-    <%--<script src="WEB-INF/resources/vendor/jquery/jquery.min.js"></script>--%>
-    <%--<script src="WEB-INF/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>--%>
-    <script src="<c:url value="/resources/vendor/jquery/jquery.min.js" />"></script>
+    <script src="<c:url value="/resources/vendor/jquery/js/jquery-3.3.1.min.js" />"></script>
     <script src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js" />"></script>
 
-    <!-- Plugin JavaScript -->
-    <%--<script src="WEB-INF/resources/vendor/jquery-easing/jquery.easing.min.js"></script>--%>
     <script src="<c:url value="/resources/vendor/jquery-easing/jquery.easing.min.js" />"></script>
 
-    <!-- Custom scripts for this template -->
-    <%--<script src="WEB-INF/resources/js/new-age.min.js"></script>--%>
     <script src="<c:url value="/resources/js/new-age.min.js" />"></script>
 
 

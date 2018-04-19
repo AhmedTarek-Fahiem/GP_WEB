@@ -6,6 +6,7 @@ import com.graduationproject.model.*;
 import com.graduationproject.responses.*;
 import com.graduationproject.service.*;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.PropertyValueException;
@@ -168,7 +169,7 @@ public class ProjectAPIController {
     @RequestMapping(value = "/setPIN", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<PatientResponse> setPIN(@RequestBody Patient patient) {
         try {
-            if (patientService.setPatientPIN(patient.getUsername(), patient.getPIN()))
+            if (patientService.setPatientPIN(patient.getUsername(), patient.getPin()))
                 return ResponseEntity.ok().body(new PatientResponse(1, 0, null));
             else
                 return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null));
@@ -180,15 +181,14 @@ public class ProjectAPIController {
 
     @RequestMapping(value = "/accessPatient", method = RequestMethod.POST, produces = "application/json")
     public @ResponseBody ResponseEntity accessPatient(@RequestBody Patient patient) {
-        System.out.println("555555115555");
         try {
-            Patient retrievedPatient = patientService.accessPatient(patient.getUsername(), patient.getPIN());
+            Patient retrievedPatient = patientService.accessPatient(patient.getUsername(), patient.getPin());
 
             if (retrievedPatient != null) {
                 List<Patient> patients = new ArrayList<>();
                 retrievedPatient.setPassword(null);
                 patients.add(retrievedPatient);
-                System.out.println("retrieved patient from access patient with PIN " + retrievedPatient.getUsername() + " - " + retrievedPatient.getEmail());
+                System.out.println("retrieved patient from access patient with PIN " + retrievedPatient.getUsername() + " - " + retrievedPatient.getPin());
                 return ResponseEntity.ok().body(new PatientResponse(1, 0, patients));
             }
             return ResponseEntity.ok().body(new PatientResponse(0, 1, null));
@@ -225,36 +225,70 @@ public class ProjectAPIController {
     }
 
     @RequestMapping(value = "/setPrescription", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity setPrescription(@RequestBody String jsonParser){
+    public @ResponseBody ResponseEntity setPrescription(@RequestBody String jsonParser) {
 
+        System.out.println("i am in web service in set prescription"); //TODO: delete print
+        System.out.println("the parser json: " + jsonParser);//TODO: delete print
         List<SuccessResponse> successResponses = new ArrayList<>();
-        int success_prescription, success_cart, success_regular;
+        int success_prescription, success_cart, success_regular, success_history;
         HttpStatus httpStatus;
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
+
+            String prescriptionDetails = "";
+
             JsonNode root = objectMapper.readTree(jsonParser);
 
             JsonNode prescriptionJson = root.path("prescription");
             if (prescriptionJson.isMissingNode()) {
-                success_prescription = success_cart = success_regular = 0;
+                success_prescription = success_cart = success_regular = success_history = 0;
                 httpStatus = HttpStatus.BAD_REQUEST;
             } else {
+                System.out.println("in api 1");//TODO: delete print
                 Prescription prescription = objectMapper.convertValue(prescriptionJson, Prescription.class);
+                System.out.println("in api 2");//TODO: delete print
 
                 JsonNode cartMedicinesJsonArray = root.path("cartMedicines");
+                System.out.println("in api 3");//TODO: delete print
                 if (cartMedicinesJsonArray.isArray() && cartMedicinesJsonArray.size() > 0) {
                     List<CartMedicine> cartMedicines = new ArrayList<>();
-                    cartMedicinesJsonArray.forEach(cartMedicineJson -> cartMedicines.add(objectMapper.convertValue(cartMedicineJson, CartMedicine.class)));
+                    double prescription_price = 0;
+                    int i = 0;
+                    CartMedicine cartMedicine;
+                    for (JsonNode cartMedicineJson : cartMedicinesJsonArray) {
+                        cartMedicine = objectMapper.convertValue(cartMedicineJson, CartMedicine.class);
+                        cartMedicine.setPrescription_id(prescription.getId());
+                        Medicine medicine = medicineService.getMedicine(cartMedicine.getMedicine_id());
+                        prescription_price += (medicine.getPrice()) * cartMedicine.getQuantity();
+                        cartMedicines.add(cartMedicine);
+
+                        prescriptionDetails += medicine.getName() + "," + cartMedicine.getQuantity();
+                        if (cartMedicinesJsonArray.size() != (++i))
+                            prescriptionDetails += "&";
+
+                    }
+                    prescription.setPrice(prescription_price);
                     success_prescription = success_cart = 1;
                     httpStatus = HttpStatus.OK;
 
                     try {
+                        JsonNode historyJson = root.path("history");
+                        if (!historyJson.isMissingNode()) {
+                            History history = objectMapper.convertValue(historyJson, History.class);
+                            success_history = 1;
+                            historyService.addHistory(history);
+                        } else {
+                            prescription.setHistory_id("1");
+                            success_history = 0;
+                        }
+
                         prescriptionService.addPrescription(prescription);
                         cartMedicineService.addCartMedicines(cartMedicines);
 
                         JsonNode regularOrdersJsonArray = root.path("regularOrders");
-                        if (regularOrdersJsonArray.isArray() && !regularOrdersJsonArray.isNull()) {
+                        if (regularOrdersJsonArray.isArray() && !regularOrdersJsonArray.isNull() && !regularOrdersJsonArray.isMissingNode()) {
                             List<RegularOrder> regularOrders = new ArrayList<>();
                             regularOrdersJsonArray.forEach(regularOrderJson -> regularOrders.add(objectMapper.convertValue(regularOrderJson, RegularOrder.class)));
                             success_regular = 1;
@@ -266,20 +300,20 @@ public class ProjectAPIController {
                         }
 
                     } catch (NullPointerException | PropertyValueException  e) {
-                        successResponses.add(new SuccessResponse(0, 0, 0));
+                        successResponses.add(new SuccessResponse(0, 0, 0, 0, null));
                         return ResponseEntity.badRequest().body(new ResultSuccessResponse(successResponses));
                     }
                 } else {
-                    success_prescription = success_cart = success_regular = 0;
+                    success_prescription = success_cart = success_regular = success_history = 0;
                     httpStatus = HttpStatus.BAD_REQUEST;
                 }
             }
 
-            successResponses.add(new SuccessResponse(success_prescription, success_cart, success_regular));
+            successResponses.add(new SuccessResponse(success_prescription, success_cart, success_regular, success_history, prescriptionDetails));
             return ResponseEntity.status(httpStatus).body(new ResultSuccessResponse(successResponses));
 
         } catch (IOException e) {
-            successResponses.add(new SuccessResponse(0, 0, 0));
+            successResponses.add(new SuccessResponse(0, 0, 0, 0, null));
             return ResponseEntity.badRequest().body(new ResultSuccessResponse(successResponses));
         }
     }
@@ -298,7 +332,7 @@ public class ProjectAPIController {
                             medicineList.add(medicineService.getMedicine(cartMedicine.getMedicine_id()))
                     );
                     PatientDetails patientDetails = new PatientDetails(
-                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(prescription.getPrescription_date().getTime()),
+                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(prescription.getPrescription_date()),
                             medicineList,
                             historyService.getHistory(prescription.getHistory_id()).getDescription());
 
@@ -309,6 +343,41 @@ public class ProjectAPIController {
         } catch (NullPointerException | PropertyValueException | NonUniqueResultException e) {
             return ResponseEntity.badRequest().body(new PatientDetailsResponse(0, null));
         }
+    }
+
+    @RequestMapping(value = "/getPrescriptionDetails", method = RequestMethod.POST)
+    public @ResponseBody String getPrescriptionDetails(@RequestBody String jsonParser) {
+
+        System.out.println("Iam in web service get prescription details");//TODO: delete pring
+        System.out.println("the parser json: " + jsonParser);//TODO: delete print
+
+        String prescriptionDetails = "";
+        int i = 0;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            JsonNode root = objectMapper.readTree(jsonParser);
+            if (!root.isNull()) {
+
+                JsonNode cartMedicinesJsonArray = root.path("cartMedicines");
+                if (cartMedicinesJsonArray.isArray() && cartMedicinesJsonArray.size() > 0) {
+                    CartMedicine cartMedicine;
+                    for (JsonNode cartMedicineJson : cartMedicinesJsonArray) {
+                        cartMedicine = objectMapper.convertValue(cartMedicineJson, CartMedicine.class);
+
+                        prescriptionDetails += medicineService.getMedicine(cartMedicine.getMedicine_id()).getName() + "," + cartMedicine.getQuantity();
+                        if (cartMedicinesJsonArray.size() != (++i))
+                            prescriptionDetails += "&";
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+        return prescriptionDetails;
     }
 
     /**-----------------------------------------------**/

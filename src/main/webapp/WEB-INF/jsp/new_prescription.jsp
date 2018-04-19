@@ -1,15 +1,12 @@
-<%@ page import="com.graduationproject.model.Patient" %>
 <%@ page import="com.graduationproject.model.Medicine" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.graduationproject.model.CartMedicine" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Ahmed_Tarek
-  Date: 31-Mar-18
-  Time: 5:52 PM
+  Date: 19-Apr-18
+  Time: 10:07 AM
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -23,17 +20,16 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css"/>" rel="stylesheet">
-
     <!-- Bootstrap core CSS -->
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
     <link href="<c:url value="/resources/css/history.css" />" rel="stylesheet">
 
+    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css"/>" rel="stylesheet">
+
     <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.min.css"/>" rel="stylesheet">
 
-    <title><% out.print(((Patient)session.getAttribute("patient")).getUsername()); %> Profile</title>
-
+    <title>New Prescription</title>
 </head>
 
 <body id="page-top">
@@ -48,13 +44,7 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#current_history">Current History</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#new_prescription">New Prescription</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="/access_patient">Access Patient History</a>
+                        <a class="nav-link js-scroll-trigger" href="/access_patient">Access New Patient</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="<c:url value="/logout" />">Logout</a>
@@ -63,67 +53,7 @@
                 </ul>
             </div>
         </div>
-        </div>
     </nav>
-
-    <section class="masthead" id="current_history">
-        <div class="container h-100">
-            <div class="row h-100">
-                <div class="col-lg-12 my-auto">
-                    <div class="header-content mx-auto">
-                        <div class="panel panel-default">
-                            <!-- Default panel contents -->
-                            <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Medical History </span></div>
-                            <table class="table table-hover table-responsive">
-                                <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Medicines</th>
-                                    <th>Description</th>
-
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <c:choose>
-                                    <c:when test="${empty patient_details}">
-                                        <tr>
-                                            <td>---</td>
-                                            <td>---</td>
-                                            <td>---</td>
-                                        </tr>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:forEach items="${patient_details}" var="prescription" >
-                                            <tr>
-                                                <td>${prescription.prescription_date}</td>
-                                                <td>
-                                                    <div align="left">
-                                                        <ul>
-                                                            <c:forEach items="${prescription.medicines}" var="medicine">
-                                                                <li>${medicine.name}</li>
-                                                            </c:forEach>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                                <td align="left">${prescription.prescription_description}</td>
-                                            </tr>
-                                        </c:forEach>
-                                    </c:otherwise>
-                                </c:choose>
-                                </tbody>
-                            </table>
-                            <c:if test="${not empty fetch_details_error}">
-                                <div class="alert alert-danger">
-                                    <p align="center">${fetch_details_error}</p>
-                                </div>
-                            </c:if>
-                        </div>
-                        <a class="nav-link js-scroll-trigger btn" href="#new_prescription">New Prescription</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <section class="masthead" id="new_prescription">
         <div class="col-lg-12 my-auto">
@@ -139,8 +69,8 @@
                             </div>
                         </c:if>
                         <div class="row">
-                        <div class="col-6"><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>
-                        <div class="col-6"><button class="btn btn-primary" style="border-radius: 100%;text-align: center;display: inline-block">5</button></div>
+                            <div class="col-6"><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>
+                            <div class="col-6"><button class="btn btn-primary" style="border-radius: 100%;text-align: center;display: inline-block">5</button></div>
                         </div>
                     </div>
                 </div>
@@ -156,10 +86,10 @@
                         </tr>
                         </thead>
                         <tbody id="prescription_medicines">
-                            <tr>
-                                <td>---</td>
-                                <td>---</td>
-                            </tr>
+                        <tr>
+                            <td>---</td>
+                            <td>---</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -188,7 +118,6 @@
 
     <!-- Custom scripts for this template -->
     <script src="<c:url value="/resources/js/new-age.min.js" />"></script>
-
 
     <script type="text/javascript">
 
@@ -290,5 +219,4 @@
     </script>
 
 </body>
-
 </html>

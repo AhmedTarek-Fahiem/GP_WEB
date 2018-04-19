@@ -40,7 +40,7 @@ public class Patient {
 
     @Column(columnDefinition = "VARCHAR(8)")
     @ColumnDefault("0")
-    private String PIN;
+    private String pin;
 
 
 
@@ -92,11 +92,11 @@ public class Patient {
         this.dob = dob;
     }
 
-    public String getPIN() {
-        return PIN;
+    public String getPin() {
+        return pin;
     }
 
-    public void setPIN(String PIN) {
-        this.PIN = PIN;
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 }

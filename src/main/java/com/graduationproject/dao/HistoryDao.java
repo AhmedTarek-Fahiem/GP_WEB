@@ -14,4 +14,8 @@ public class HistoryDao {
     public History getHistory(String history_id) {
         return (History)(sessionFactory.getCurrentSession().get(History.class, history_id));
     }
+
+    public void addHistory(History history) {
+        sessionFactory.getCurrentSession().saveOrUpdate(history);
+    }
 }

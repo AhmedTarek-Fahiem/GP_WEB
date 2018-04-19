@@ -13,7 +13,13 @@ public class HistoryService {
     @Autowired
     private HistoryDao historyDao;
 
+    @Transactional
     public History getHistory(String history_id) {
         return historyDao.getHistory(history_id);
+    }
+
+    @Transactional
+    public void addHistory(History history) {
+        historyDao.addHistory(history);
     }
 }

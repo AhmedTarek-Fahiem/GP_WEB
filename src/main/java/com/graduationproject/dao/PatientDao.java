@@ -54,7 +54,7 @@ public class PatientDao {
     public boolean setPatientPIN(String username, String PatientPIN) {
         Patient patient = getPatientByUsername(username);
         if (patient != null) {
-            patient.setPIN(PatientPIN);
+            patient.setPin(PatientPIN);
             sessionFactory.getCurrentSession().update(patient);
             return true;
         } else
@@ -64,7 +64,7 @@ public class PatientDao {
     public Patient accessPatient(String username, String patientPIN){
         Patient patient = getPatientByUsername(username);
         if (patient != null) {
-            if (patient.getPIN().equals(patientPIN))
+            if (patient.getPin().equals(patientPIN))
                 return patient;
         }
         return null;

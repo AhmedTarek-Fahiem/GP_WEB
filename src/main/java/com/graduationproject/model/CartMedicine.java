@@ -27,10 +27,10 @@ public class CartMedicine implements Serializable {
     @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private String prescription_id;
 
-    @Column(columnDefinition = "INTEGER(11)", nullable = false, unique = true)
+    @Column(columnDefinition = "INTEGER(11)", nullable = false)
     private int quantity;
 
-    @Column(columnDefinition = "INTEGER(11)", nullable = false, unique = true)
+    @Column(columnDefinition = "INTEGER(11)", nullable = false)
     private int repeat_duration;
 
 

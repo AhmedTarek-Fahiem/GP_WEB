@@ -20,28 +20,17 @@
 
     <title>Login</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
-
     <link href="<c:url value="/resources/css/style.css" />" rel="stylesheet">
 
-    <script defer src="<c:url value="/resources/vendor/font-awesome/css/fontawesome-all.min.js"/>"></script>
-
     <!-- Custom fonts for this template -->
-    <%--<link rel="stylesheet" href="<c:url value="/resources/vendor/font-awesome/css/font-awesome.min.css"/>">--%>
     <link rel="stylesheet" href="<c:url value="/resources/vendor/simple-line-icons/css/simple-line-icons.css"/>">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
 
-    <!-- Plugin CSS -->
-    <link rel="stylesheet" href="<c:url value="/resources/device-mockups/device-mockups.min.css"/>">
-
-    <!-- Custom styles for this template -->
-    <link href="<c:url value="/resources/css/new-age.min.css"/>" rel="stylesheet">
-
     <link href="<c:url value="/resources/css/app.css"/>" rel="stylesheet">
-    <link href="<c:url value="/resources/css/bootstrap.css"/>" rel="stylesheet">
+    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css" />" rel="stylesheet">
+    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
 </head>
 
@@ -65,11 +54,11 @@
                         </div>
                     </c:if>
                     <div class="input-group input-sm">
-                        <label class="input-group-addon" for="username"><i class="far fa-user"></i></label>
+                        <label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
                         <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" required>
                     </div>
                     <div class="input-group input-sm">
-                        <label class="input-group-addon" for="password"><i class="far fa-lock"></i></label>
+                        <label class="input-group-addon" for="password"><i class="fa fa-lock"></i></label>
                         <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
                     </div>
                     <div class="input-group input-sm">
@@ -111,17 +100,14 @@
         </ul>
     </div>
 
+    <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
+
     <!-- Bootstrap core JavaScript -->
-    <script src="<c:url value="/resources/vendor/jquery/jquery.min.js" />"></script>
+    <script src="<c:url value="/resources/vendor/jquery/js/jquery-3.3.1.min.js" />"></script>
     <script src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js" />"></script>
 
     <script src="<c:url value="/resources/js/index.js" />"></script>
 
-    <!-- Plugin JavaScript -->
-    <script src="<c:url value="/resources/vendor/jquery-easing/jquery.easing.min.js" />"></script>
-
-    <!-- Custom scripts for this template -->
-    <script src="<c:url value="/resources/js/new-age.min.js" />"></script>
 
 </body>
 

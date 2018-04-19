@@ -41,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/access", "/patient_profile")
+                .antMatchers("/access_patient", "/patient_profile")
                     .access("hasRole('USER') or hasRole('ADMIN')")
                 .antMatchers("/api/newMedicine", "/api/editMedicine/**", "/api/saveMedicine", "/api/deleteMedicine/**")
                     .access("hasRole('ADMIN')")
@@ -51,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .loginProcessingUrl("/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/access")
+                    .defaultSuccessUrl("/access_patient")
                 .and()
                 .rememberMe()
                     .rememberMeParameter("remember-me")
