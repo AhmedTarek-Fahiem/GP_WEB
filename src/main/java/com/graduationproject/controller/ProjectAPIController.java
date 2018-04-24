@@ -246,61 +246,67 @@ public class ProjectAPIController {
                 success_prescription = success_cart = success_regular = success_history = 0;
                 httpStatus = HttpStatus.BAD_REQUEST;
             } else {
-                System.out.println("in api 1");//TODO: delete print
                 Prescription prescription = objectMapper.convertValue(prescriptionJson, Prescription.class);
-                System.out.println("in api 2");//TODO: delete print
 
                 JsonNode cartMedicinesJsonArray = root.path("cartMedicines");
-                System.out.println("in api 3");//TODO: delete print
                 if (cartMedicinesJsonArray.isArray() && cartMedicinesJsonArray.size() > 0) {
                     List<CartMedicine> cartMedicines = new ArrayList<>();
                     double prescription_price = 0;
                     int i = 0;
+                    String outOfStockMedicines = "";
                     CartMedicine cartMedicine;
                     for (JsonNode cartMedicineJson : cartMedicinesJsonArray) {
                         cartMedicine = objectMapper.convertValue(cartMedicineJson, CartMedicine.class);
                         cartMedicine.setPrescription_id(prescription.getId());
                         Medicine medicine = medicineService.getMedicine(cartMedicine.getMedicine_id());
-                        prescription_price += (medicine.getPrice()) * cartMedicine.getQuantity();
-                        cartMedicines.add(cartMedicine);
+                        if (cartMedicine.getQuantity() <= medicine.getQuantity()) {
+                            prescription_price += (medicine.getPrice()) * cartMedicine.getQuantity();
+                            cartMedicines.add(cartMedicine);
 
-                        prescriptionDetails += medicine.getName() + "," + cartMedicine.getQuantity();
-                        if (cartMedicinesJsonArray.size() != (++i))
-                            prescriptionDetails += "&";
+                            prescriptionDetails += medicine.getName() + "," + cartMedicine.getQuantity();
+                            if (cartMedicinesJsonArray.size() != (++i))
+                                prescriptionDetails += "&";
+                        } else
+                            outOfStockMedicines += medicine.getName() + " , ";
 
                     }
-                    prescription.setPrice(prescription_price);
-                    success_prescription = success_cart = 1;
-                    httpStatus = HttpStatus.OK;
+                    if (outOfStockMedicines.length() == 0) {
+                        prescription.setPrice(prescription_price);
+                        success_prescription = success_cart = 1;
+                        httpStatus = HttpStatus.OK;
 
-                    try {
-                        JsonNode historyJson = root.path("history");
-                        if (!historyJson.isMissingNode()) {
-                            History history = objectMapper.convertValue(historyJson, History.class);
-                            success_history = 1;
-                            historyService.addHistory(history);
-                        } else {
-                            prescription.setHistory_id("1");
-                            success_history = 0;
+                        try {
+                            JsonNode historyJson = root.path("history");
+                            if (!historyJson.isMissingNode()) {
+                                History history = objectMapper.convertValue(historyJson, History.class);
+                                success_history = 1;
+                                historyService.addHistory(history);
+                            } else {
+                                prescription.setHistory_id("1");
+                                success_history = 0;
+                            }
+
+                            prescriptionService.addPrescription(prescription);
+                            cartMedicineService.addCartMedicines(cartMedicines);
+
+                            JsonNode regularOrdersJsonArray = root.path("regularOrders");
+                            if (regularOrdersJsonArray.isArray() && !regularOrdersJsonArray.isNull() && !regularOrdersJsonArray.isMissingNode()) {
+                                List<RegularOrder> regularOrders = new ArrayList<>();
+                                regularOrdersJsonArray.forEach(regularOrderJson -> regularOrders.add(objectMapper.convertValue(regularOrderJson, RegularOrder.class)));
+                                success_regular = 1;
+                                httpStatus = HttpStatus.OK;
+
+                                regularOrderService.addRegularOrders(regularOrders);
+                            } else {
+                                success_regular = 0;
+                            }
+
+                        } catch (NullPointerException | PropertyValueException  e) {
+                            successResponses.add(new SuccessResponse(0, 0, 0, 0, null, null));
+                            return ResponseEntity.badRequest().body(new ResultSuccessResponse(successResponses));
                         }
-
-                        prescriptionService.addPrescription(prescription);
-                        cartMedicineService.addCartMedicines(cartMedicines);
-
-                        JsonNode regularOrdersJsonArray = root.path("regularOrders");
-                        if (regularOrdersJsonArray.isArray() && !regularOrdersJsonArray.isNull() && !regularOrdersJsonArray.isMissingNode()) {
-                            List<RegularOrder> regularOrders = new ArrayList<>();
-                            regularOrdersJsonArray.forEach(regularOrderJson -> regularOrders.add(objectMapper.convertValue(regularOrderJson, RegularOrder.class)));
-                            success_regular = 1;
-                            httpStatus = HttpStatus.OK;
-
-                            regularOrderService.addRegularOrders(regularOrders);
-                        } else {
-                            success_regular = 0;
-                        }
-
-                    } catch (NullPointerException | PropertyValueException  e) {
-                        successResponses.add(new SuccessResponse(0, 0, 0, 0, null));
+                    } else {
+                        successResponses.add(new SuccessResponse(0, 0, 0, 0, null, outOfStockMedicines));
                         return ResponseEntity.badRequest().body(new ResultSuccessResponse(successResponses));
                     }
                 } else {
@@ -309,11 +315,11 @@ public class ProjectAPIController {
                 }
             }
 
-            successResponses.add(new SuccessResponse(success_prescription, success_cart, success_regular, success_history, prescriptionDetails));
+            successResponses.add(new SuccessResponse(success_prescription, success_cart, success_regular, success_history, prescriptionDetails, null));
             return ResponseEntity.status(httpStatus).body(new ResultSuccessResponse(successResponses));
 
         } catch (IOException e) {
-            successResponses.add(new SuccessResponse(0, 0, 0, 0, null));
+            successResponses.add(new SuccessResponse(0, 0, 0, 0, null, null));
             return ResponseEntity.badRequest().body(new ResultSuccessResponse(successResponses));
         }
     }

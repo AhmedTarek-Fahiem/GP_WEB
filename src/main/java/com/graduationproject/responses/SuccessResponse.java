@@ -7,13 +7,15 @@ public class SuccessResponse {
     private int success_regular;
     private int success_history;
     private String prescription_details;
+    private String outOfStockMedicines;
 
-    public SuccessResponse(int success_prescription, int success_cart, int success_regular, int success_history, String prescription_details) {
+    public SuccessResponse(int success_prescription, int success_cart, int success_regular, int success_history, String prescription_details, String outOfStockMedicines) {
         this.success_prescription = success_prescription;
         this.success_cart = success_cart;
         this.success_regular = success_regular;
         this.success_history = success_history;
         this.prescription_details = prescription_details;
+        this.outOfStockMedicines = outOfStockMedicines;
     }
 
     public int getSuccess_prescription() {
@@ -54,5 +56,13 @@ public class SuccessResponse {
 
     public void setPrescription_details(String prescription_details) {
         this.prescription_details = prescription_details;
+    }
+
+    public String getOutOfStockMedicines() {
+        return outOfStockMedicines;
+    }
+
+    public void setOutOfStockMedicines(String outOfStockMedicines) {
+        this.outOfStockMedicines = outOfStockMedicines;
     }
 }

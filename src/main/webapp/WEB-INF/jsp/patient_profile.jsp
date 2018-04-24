@@ -138,10 +138,11 @@
                                 <p align="center">${cart_error}</p>
                             </div>
                         </c:if>
-                        <div class="row">
-                        <div class="col-6"><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>
-                        <div class="col-6"><button class="btn btn-primary" style="border-radius: 100%;text-align: center;display: inline-block">5</button></div>
-                        </div>
+                        <%--<div class="row">--%>
+                        <div><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>
+                        <%--<div class="col-6"><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>--%>
+                        <%--<div class="col-6"><button class="btn btn-primary" style="border-radius: 100%;text-align: center;display: inline-block">5</button></div>--%>
+                        <%--</div>--%>
                     </div>
                 </div>
                 <br><br>
@@ -153,10 +154,12 @@
                         <tr>
                             <th>Name</th>
                             <th>Category</th>
+                            <th>Price</th>
                         </tr>
                         </thead>
                         <tbody id="prescription_medicines">
                             <tr>
+                                <td>---</td>
                                 <td>---</td>
                                 <td>---</td>
                             </tr>
@@ -256,6 +259,7 @@
                         innerHTML += "<tr>" +
                             "<td>" + prescription_medicines[index].name + "</td>" +
                             "<td>" + prescription_medicines[index].category + "</td>" +
+                            "<td>" + prescription_medicines[index].price + " L.E</td>" +
                             "</tr>";
                     }
                     $("#prescription_medicines").html(innerHTML);

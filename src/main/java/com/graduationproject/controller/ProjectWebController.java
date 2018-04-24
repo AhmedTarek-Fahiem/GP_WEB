@@ -75,7 +75,6 @@ public class ProjectWebController {
     public ModelAndView patientAccess(HttpSession session) {
         System.out.println("patientAccess method with get");//TODO: delete print code
         session.invalidate();
-//        session.setAttribute("registered_patient", false);//TODO: anonymous patent
         ModelAndView modelAndView = new ModelAndView("access");
         modelAndView.addObject("patient", new Patient());
         return modelAndView;
@@ -228,15 +227,17 @@ public class ProjectWebController {
     @RequestMapping(value = "/edit_medicine_quantity", method = RequestMethod.POST)
     public @ResponseBody String editMedicineQuantity(@RequestParam String medicine_id, @RequestParam int quantity, HttpSession session) {
         try {
-            for (CartMedicine cartMedicine : ((List<CartMedicine>) session.getAttribute("cart_medicines"))) {
-                if (cartMedicine.getMedicine_id().equals(medicine_id)) {
-                    cartMedicine.setQuantity(quantity > 0 ? quantity : 1);
-                    for (Medicine medicine : ((List<Medicine>) session.getAttribute("prescription_medicines"))) {
-                        if (medicine.getId().equals(medicine_id)) {
-                            medicine.setQuantity(quantity > 0 ? quantity : 1);
-                            return "Done";
+            for (Medicine medicine : ((List<Medicine>) session.getAttribute("prescription_medicines"))) {
+                if (medicine.getId().equals(medicine_id)) {
+                    if (medicine.getQuantity() >= quantity) {
+                        for (CartMedicine cartMedicine : ((List<CartMedicine>) session.getAttribute("cart_medicines"))) {
+                            if (cartMedicine.getMedicine_id().equals(medicine_id)) {
+                                cartMedicine.setQuantity(quantity > 0 ? quantity : 1);
+                                return "Done";
+                            }
                         }
-                    }
+                    } else
+                        return "Out_of_Stock";
                 }
             }
         } catch (NullPointerException e) {
@@ -249,29 +250,18 @@ public class ProjectWebController {
             for (CartMedicine cartMedicine : (List<CartMedicine>) session.getAttribute("cart_medicines")) {
                 if (cartMedicine.getMedicine_id().equals(medicine_id)) {
                     ((List<CartMedicine>) session.getAttribute("cart_medicines")).remove(cartMedicine);
-
-//                    if (((List<CartMedicine>) session.getAttribute("cart_medicines")).size() == 0) {
-//                        session.setAttribute("prescription_medicines", new ArrayList<Medicine>());
-//                        if ((boolean)session.getAttribute("registered_patient"))
-//                            return "redirect:/" + "patient_profile/" + ((Patient)session.getAttribute("patient")).getUsername();
-////                            return new ModelAndView("redirect:/" + "patient_profile/" + ((Patient)session.getAttribute("patient")).getUsername());
-//                        else
-//                            return "redirect:/" + "access_patient";
-//                    } else {
-                        for (Medicine medicine : ((List<Medicine>) session.getAttribute("prescription_medicines"))) {
-                            if (medicine.getId().equals(medicine_id)) {
-                                ((List<Medicine>) session.getAttribute("prescription_medicines")).remove(medicine);
-                                return "Done_";
-                            }
+                    for (Medicine medicine : ((List<Medicine>) session.getAttribute("prescription_medicines"))) {
+                        if (medicine.getId().equals(medicine_id)) {
+                            ((List<Medicine>) session.getAttribute("prescription_medicines")).remove(medicine);
+                            return "Done_";
                         }
-//                    }
+                    }
                 }
             }
         } catch (NullPointerException e) {
             System.out.println("error in deleting");
         }
         return "Error_";
-//        return new ModelAndView("patient_cart");
     }
 
     @RequestMapping(value = "patient_cart/cart_table", method = RequestMethod.GET)
@@ -328,7 +318,8 @@ public class ProjectWebController {
                                     System.out.println("return finally you have insert a new prescription to the patient");//TODO: delete print
                                     session.setAttribute("prescription_qr", Base64.encode(QRCode.from(successResponse.getPrescription_details()).to(ImageType.PNG).withSize(500, 500).stream().toByteArray()));
                                     return new ModelAndView("redirect:/" + "prescription_qr");
-                                }
+                                } else if (successResponse.getOutOfStockMedicines().length() > 0)
+                                    return new ModelAndView("redirect:/" + "patient_profile/" + patient.getUsername()).addObject("cart_error", "Sorry This medicine/s is not currently in stock \n" + successResponse.getOutOfStockMedicines());
                             }
                             // return something went wrong when parsing the json
                             System.out.println("return something went wrong when parsing the json");//TODO: delete print

@@ -152,38 +152,37 @@
             loadData();
 
             $("#commit_prescription").click(function () {
-                <c:choose>
-                    <c:when test="${not empty history}">
-                        $("#history_section").show();
-                        $('html, body').animate({
-                            scrollTop: $("#history_section").offset().top /*class you want to scroll to!!*/
-                        }, 1000); /*animation time length*/
-                    </c:when>
-                    <c:otherwise>
-
-                    </c:otherwise>
-                </c:choose>
+                <c:if test="${not empty history}">
+                    $("#history_section").show();
+                    $('html, body').animate({
+                        scrollTop: $("#history_section").offset().top /*class you want to scroll to!!*/
+                    }, 1000); /*animation time length*/
+                </c:if>
             });
         });
 
         function setMedicineQuantity(medicine_id, quantity) {
             $.post("<c:url value="/edit_medicine_quantity"/>" + "?medicine_id=" + medicine_id + "&quantity=" + quantity)
                 .done(function (data, status, xhr) {
-                    console.log("success editing");
+                    if (data === "Done")
+                        console.log("success editing");
+                    else if (data === "Error")
+                        alert("Error in editing the medicine quantity.");
+                    else if (data === "Out_of_Stock")
+                        alert("Sorry This medicine is not currently in stock.");
                     loadData();
                 });
         }
-        function deleteMedicine(medicine_id) {
-            var r = confirm('Are you sure?');
+        function deleteMedicine(medicine_name, medicine_id) {
+            var r = confirm('Are you sure you want to delete \n' + medicine_name + ' ?');
             if (r === true) {
                 $.post("<c:url value="/delete_medicine"/>" + "?medicine_id=" + medicine_id)
                     .done(function (data, status, xhr) {
                         console.log("success deleting");
-                        if (document.getElementById("prescription_medicines").getElementsByTagName("tr").length === 1) {
+                        if (document.getElementById("prescription_medicines").getElementsByTagName("tr").length === 1)
                             history.back();
-                        } else {
+                        else
                             loadData();
-                        }
                     });
             }
         }

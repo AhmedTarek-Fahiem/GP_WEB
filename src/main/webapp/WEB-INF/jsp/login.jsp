@@ -106,8 +106,6 @@
     <script src="<c:url value="/resources/vendor/jquery/js/jquery-3.3.1.min.js" />"></script>
     <script src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js" />"></script>
 
-    <script src="<c:url value="/resources/js/index.js" />"></script>
-
 
 </body>
 
