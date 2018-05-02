@@ -21,7 +21,7 @@
     <!-- Bootstrap core CSS -->
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/css/history.css" />" rel="stylesheet">
+    <link href="<c:url value="/resources/css/cart.css" />" rel="stylesheet">
 
     <title>Patient Access</title>
 
@@ -64,13 +64,13 @@
                             <form:form action="/access_patient" method="post" modelAttribute="patient" class="form" id="submitForm">
                                 <c:if test="${not empty error}">
                                     <div class="alert alert-danger">
-                                        <p align="center">Invalid username or PIN.</p>
+                                        <p align="center">Invalid username or PIN</p>
                                     </div>
                                 </c:if>
                                 <form:hidden path="id"/>
                                 <form:input id="username" name="username" path="username" placeholder="Enter the patient's Username" class="form-control" required="true"/><br>
                                 <form:input id="pin" name="pin" path="pin" placeholder="Enter the patient's PIN" type="number" class="form-control" required="true"/><br>
-                                <input type="submit" value="Access" class="btn btn-block btn-primary btn-default">
+                                <input type="submit" value="Access" class="btn btn-block btn-info">
                             </form:form>
                             </div>
 

@@ -32,7 +32,7 @@
     <link rel="stylesheet" href="<c:url value="/resources/device-mockups/device-mockups.min.css"/>">
 
     <!-- Custom styles for this template -->
-    <link href="<c:url value="/resources/css/new-age.min.css"/>" rel="stylesheet">
+    <link href="<c:url value="/resources/css/new-age.css"/>" rel="stylesheet">
 
 </head>
 
@@ -78,12 +78,7 @@
                         <div class="device-mockup galaxy_s5 portrait black">
                             <div class="device">
                                 <div class="screen">
-                                    <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
-                                    <%--<img src="WEB-INF/resources/img/demo-screen-1.jpg" class="img-fluid" alt="">--%>
                                     <img src="<c:url value="/resources/img/demo-screen-1.jpg"/>" class="img-fluid" alt="">
-                                </div>
-                                <div class="button">
-                                    <!-- You can hook the "home button" to some JavaScript events or just remove it -->
                                 </div>
                             </div>
                         </div>

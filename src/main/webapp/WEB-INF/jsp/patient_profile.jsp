@@ -23,16 +23,16 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css"/>" rel="stylesheet">
-
     <!-- Bootstrap core CSS -->
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/css/history.css" />" rel="stylesheet">
+    <link href="<c:url value="/resources/css/cart.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.min.css"/>" rel="stylesheet">
+    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.css"/>" rel="stylesheet">
 
-    <title><% out.print(((Patient)session.getAttribute("patient")).getUsername()); %> Profile</title>
+
+
+    <title><% out.print(((Patient)session.getAttribute("patient")).getUsername()); %>'s Profile</title>
 
 </head>
 
@@ -74,13 +74,13 @@
                         <div class="panel panel-default">
                             <!-- Default panel contents -->
                             <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Medical History </span></div>
-                            <table class="table table-hover table-responsive">
+                            <br>
+                            <table class="table table-hover">
                                 <thead>
                                 <tr>
                                     <th>Date</th>
                                     <th>Medicines</th>
                                     <th>Description</th>
-
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -118,7 +118,6 @@
                                 </div>
                             </c:if>
                         </div>
-                        <a class="nav-link js-scroll-trigger btn" href="#new_prescription">New Prescription</a>
                     </div>
                 </div>
             </div>
@@ -128,27 +127,22 @@
     <section class="masthead" id="new_prescription">
         <div class="col-lg-12 my-auto">
             <div class="header-content mx-auto">
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <br>
-                        <h1>Welcome</h1>
-                        <br/>
-                        <c:if test="${not empty cart_error}">
-                            <div class="alert alert-danger">
-                                <p align="center">${cart_error}</p>
-                            </div>
-                        </c:if>
-                        <%--<div class="row">--%>
-                        <div><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>
-                        <%--<div class="col-6"><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>--%>
-                        <%--<div class="col-6"><button class="btn btn-primary" style="border-radius: 100%;text-align: center;display: inline-block">5</button></div>--%>
-                        <%--</div>--%>
-                    </div>
+                <div class="col-md-12 text-center">
+                    <br>
+                    <h1>Welcome</h1>
+                    <br>
+                    <c:if test="${not empty cart_error}">
+                        <div class="alert alert-danger">
+                            <p align="center">${cart_error}</p>
+                        </div>
+                    </c:if>
+                    <input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: large"/>
                 </div>
                 <br><br>
                 <div class="panel panel-default">
                     <!-- Default panel contents -->
                     <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription </span></div>
+                    <br>
                     <table class="table table-hover" id="medicines">
                         <thead>
                         <tr>
@@ -166,7 +160,7 @@
                         </tbody>
                     </table>
                 </div>
-                <input type="submit" class="btn btn-block btn-primary btn-default" id="done_search" value="Next"/>
+                <input type="submit" class="btn btn-block btn-primary btn-info" id="done_search" value="Next" />
             </div>
         </div>
     </section>
@@ -178,19 +172,19 @@
     </footer>
 
 
-    <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
-
-    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.min.js"/>"></script>
-
     <!-- Bootstrap core JavaScript -->
     <script src="<c:url value="/resources/vendor/jquery/js/jquery-3.3.1.min.js" />"></script>
-    <script src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js" />"></script>
+    <script src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.min.js" />"></script>
 
     <!-- Plugin JavaScript -->
     <script src="<c:url value="/resources/vendor/jquery-easing/jquery.easing.min.js" />"></script>
 
     <!-- Custom scripts for this template -->
     <script src="<c:url value="/resources/js/new-age.min.js" />"></script>
+
+    <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
+
+    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.js"/>"></script>
 
 
     <script type="text/javascript">
@@ -247,7 +241,7 @@
                         reloadPrescriptionTable();
                         $(this).val("");
                     } else {
-                        alert("Sorry this medicine is out of stock /n please try again later.");
+                        alert("Sorry this medicine is out of stock/nplease try again later");
                     }
                     return false;
                 }

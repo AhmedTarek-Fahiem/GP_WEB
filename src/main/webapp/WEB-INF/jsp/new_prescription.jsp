@@ -23,11 +23,9 @@
     <!-- Bootstrap core CSS -->
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/css/history.css" />" rel="stylesheet">
+    <link href="<c:url value="/resources/css/cart.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css"/>" rel="stylesheet">
-
-    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.min.css"/>" rel="stylesheet">
+    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.css"/>" rel="stylesheet">
 
     <title>New Prescription</title>
 </head>
@@ -49,17 +47,17 @@
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="<c:url value="/logout" />">Logout</a>
                     </li>
-
                 </ul>
             </div>
         </div>
     </nav>
 
     <section class="masthead" id="new_prescription">
-        <div class="col-lg-12 my-auto">
-            <div class="header-content mx-auto">
-                <div class="row">
-                    <div class="col-md-12 text-center">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto">
+                    <div class="header-content mx-auto">
+                        <div class="col-md-12 text-center">
                         <br>
                         <h1>Welcome</h1>
                         <br/>
@@ -68,35 +66,33 @@
                                 <p align="center">${cart_error}</p>
                             </div>
                         </c:if>
-                        <%--<div class="row">--%>
-                            <div><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>
-                            <%--<div class="col-6"><input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: x-large"/></div>--%>
-                            <%--<div class="col-6"><button class="btn btn-primary" style="border-radius: 100%;text-align: center;display: inline-block">5</button></div>--%>
-                        <%--</div>--%>
+                        <input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: large"/>
+                        </div>
+                        <br><br>
+                        <div class="panel panel-default">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription</span></div>
+                            <br>
+                            <table class="table table-hover" id="medicines">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                </tr>
+                                </thead>
+                                <tbody id="prescription_medicines">
+                                <tr>
+                                    <td>---</td>
+                                    <td>---</td>
+                                    <td>---</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    <button type="submit" class="btn btn-block btn-info" id="done_search">Next</button>>
                     </div>
                 </div>
-                <br><br>
-                <div class="panel panel-default">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription </span></div>
-                    <table class="table table-hover" id="medicines">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                        </tr>
-                        </thead>
-                        <tbody id="prescription_medicines">
-                        <tr>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>---</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <input type="submit" class="btn btn-block btn-primary btn-default" id="done_search" value="Next"/>
             </div>
         </div>
     </section>
@@ -107,14 +103,13 @@
         </div>
     </footer>
 
-
-    <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
-
-    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.min.js"/>"></script>
-
     <!-- Bootstrap core JavaScript -->
     <script src="<c:url value="/resources/vendor/jquery/js/jquery-3.3.1.min.js" />"></script>
     <script src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js" />"></script>
+
+    <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
+
+    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.js"/>"></script>
 
     <!-- Plugin JavaScript -->
     <script src="<c:url value="/resources/vendor/jquery-easing/jquery.easing.min.js" />"></script>

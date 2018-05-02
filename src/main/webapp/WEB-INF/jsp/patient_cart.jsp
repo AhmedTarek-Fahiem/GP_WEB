@@ -23,16 +23,14 @@
     <!-- Bootstrap core CSS -->
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/css/history.css" />" rel="stylesheet">
+    <link href="<c:url value="/resources/css/cart.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css"/>" rel="stylesheet">
-
-    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.min.css"/>" rel="stylesheet">
+    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.css"/>" rel="stylesheet">
 
     <title>
         <%
             if ((boolean) session.getAttribute("registered_patient"))
-                    out.print(((Patient)session.getAttribute("patient")).getUsername() + " ");
+                    out.print(((Patient)session.getAttribute("patient")).getUsername() + "'s ");
         %>Cart
     </title>
 
@@ -63,55 +61,55 @@
     </nav>
 
     <section class="masthead" id="prescription">
-        <div class="col-lg-12 my-auto">
-            <div class="header-content mx-auto">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto">
+                    <div class="header-content mx-auto">
 
-                <div class="panel panel-default">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription </span></div>
-
-                    <div id="load_me"><jsp:include page="cart_table.jsp"/></div>
-
-                </div>
+                        <div class="panel panel-default">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription </span></div>
+                            <br>
+                            <div id="load_me"><jsp:include page="cart_table.jsp"/></div>
+                        </div>
                 <c:choose>
                     <c:when test="${not empty history}">
-                        <input type="submit" class="btn btn-block btn-primary btn-default" id="commit_prescription" value="Commit" />
+                        <input type="submit" class="btn btn-block btn-info" id="commit_prescription" value="Commit" />
                     </c:when>
                     <c:otherwise>
                         <form action="/commit_cart" method="post">
-                            <input type="submit" class="btn btn-block btn-primary btn-default" value="Confirm" />
+                            <input type="submit" class="btn btn-block btn-info" value="Confirm" />
                         </form>
                     </c:otherwise>
                 </c:choose>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <c:if test="${not empty history}">
     <section class="masthead" id="history_section">
-        <div class="container h-100">
-            <div class="row h-100">
-                <div class="col-lg-7 my-auto">
-                    <div class="header-content mx-auto">
-                        <form:form action="/commit_cart" method="post" modelAttribute="history" >
+        <div class="col-lg-12 my-auto">
+            <div class="header-content mx-auto">
+                <div class="col-md-12 text-center">
+                    <form:form action="/commit_cart" method="post" modelAttribute="history" >
 
-                            <form:hidden path="id"/>
-                            <div class="form-group">
-                                <label class="col-form-label-lg" for="history_description">Add to History</label>
-                                <form:textarea type="text" class="form-control" id="history_description" path="description" rows="3" cols="5" placeholder="New case to add to history..." style="max-height: 200px;" required="true"/>
-                            </div>
-                            <input type="submit" id="submit_prescription" value="Confirm" class="btn btn-block btn-primary btn-default" >
-
-                        </form:form>
-
-                        <div class="error_response">
-                            <%--<%@ include file="error.jsp" %>--%>
-                            <c:if test="${not empty commit_error}">
-                                <div class="alert alert-danger">
-                                    <h1 align="center">${commit_error}</h1>
-                                </div>
-                            </c:if>
+                        <form:hidden path="id"/>
+                        <div class="form-group">
+                            <label class="col-form-label-lg" for="history_description" style="font-weight: bold; font-size: large">Add to History</label>
+                            <br>
+                            <form:textarea type="text" class="form-control" id="history_description" path="description" rows="3" cols="5" placeholder="New case to add to history..." style="max-height: 200px;" required="true"/>
                         </div>
+                        <input type="submit" id="submit_prescription" value="Confirm" class="btn btn-block btn-info" >
+
+                    </form:form>
+                    <div class="error_response">
+                        <c:if test="${not empty commit_error}">
+                            <div class="alert alert-danger">
+                                <h1 align="center">${commit_error}</h1>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -128,7 +126,7 @@
 
     <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
 
-    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.min.js"/>"></script>
+    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.js"/>"></script>
 
 
     <!-- Bootstrap core JavaScript -->
@@ -155,8 +153,8 @@
                 <c:if test="${not empty history}">
                     $("#history_section").show();
                     $('html, body').animate({
-                        scrollTop: $("#history_section").offset().top /*class you want to scroll to!!*/
-                    }, 1000); /*animation time length*/
+                        scrollTop: $("#history_section").offset().top
+                    }, 500);
                 </c:if>
             });
         });

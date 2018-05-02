@@ -20,85 +20,68 @@
 
     <title>Login</title>
 
-    <link href="<c:url value="/resources/css/style.css" />" rel="stylesheet">
+    <link href="<c:url value="/resources/css/login.css" />" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <link rel="stylesheet" href="<c:url value="/resources/vendor/simple-line-icons/css/simple-line-icons.css"/>">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
 
     <link href="<c:url value="/resources/css/app.css"/>" rel="stylesheet">
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css" />" rel="stylesheet">
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
 </head>
 
-<body id="page-top">
+<body>
 
-    <div class="wrapper">
-        <div class="container">
-            <h1>Welcome</h1>
+    <section class="wrapper">
+        <div class="col-lg-8 col-lg-offset-2">
+                <h1 class="text-center">Login</h1>
 
-            <div class="login-form">
-                <c:url var="loginUrl" value="/login" />
-                <form action="${loginUrl}" method="post" class="form-horizontal">
-                    <c:if test="${param.error != null}">
-                        <div class="alert alert-danger">
-                            <p>Invalid username and password.</p>
+                <div class="login-form">
+                    <c:url var="loginUrl" value="/login" />
+                    <form action="${loginUrl}" method="post" class="form-horizontal">
+                        <c:if test="${param.error != null}">
+                            <div class="alert alert-danger">
+                                <p>Invalid username and password</p>
+                            </div>
+                        </c:if>
+                        <c:if test="${param.logout != null}">
+                            <div class="alert alert-success">
+                                <p>You have been logged out successfully</p>
+                            </div>
+                        </c:if>
+                        <div class="input-group input-sm">
+                            <label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
+                            <input type="text" class="form-control login-input" id="username" name="username" placeholder="Username" required>
                         </div>
-                    </c:if>
-                    <c:if test="${param.logout != null}">
-                        <div class="alert alert-success">
-                            <p>You have been logged out successfully.</p>
+                        <div class="input-group input-sm">
+                            <label class="input-group-addon" for="password"><i class="fa fa-lock"></i></label>
+                            <input type="password" class="form-control login-input" id="password" name="password" placeholder="Password" required>
                         </div>
-                    </c:if>
-                    <div class="input-group input-sm">
-                        <label class="input-group-addon" for="username"><i class="fa fa-user"></i></label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" required>
-                    </div>
-                    <div class="input-group input-sm">
-                        <label class="input-group-addon" for="password"><i class="fa fa-lock"></i></label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
-                    </div>
-                    <div class="input-group input-sm">
-                        <div class="checkbox">
-                            <label><input type="checkbox" id="rememberme" name="remember-me"> Remember Me</label>
+                        <div class="input-group input-sm">
+                            <div class="checkbox">
+                                <label><input type="checkbox" id="rememberme" name="remember-me"> Remember Me</label>
+                            </div>
                         </div>
-                    </div>
-                    <input type="hidden" name="${_csrf.parameterName}"  value="${_csrf.token}" />
+                        <input type="hidden" name="${_csrf.parameterName}"  value="${_csrf.token}" />
 
-                    <div class="form-actions">
-                        <input type="submit" class="btn btn-block btn-primary btn-default" value="Log in">
-                    </div>
-                </form>
-            </div>
+                        <div class="form-actions">
+                            <button type="submit" class="center-block">Log in</button>
+                        </div>
+                    </form>
+                </div>
 
-            <p>WARNING: This login is intended for doctors only. If you are a doctor and wish to join, send us your information to hakuna.matata@lalaland.com</p>
+                <p>This login is intended for doctors only. If you are a doctor and wish to join, send us your information to hakuna.matata@lalaland.com</p>
 
         </div>
 
-        <br><br><br><br><br><br><br>
-
-        <footer>
-            <div class="container">
-                <p>&copy; Graduation 2018. All Rights Reserved</p>
-            </div>
-        </footer>
-
-        <ul class="bg-bubbles">
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul>
-    </div>
+    </section>
+    <footer>
+        <div>
+            <p>&copy; Graduation 2018. All Rights Reserved</p>
+        </div>
+    </footer>
 
     <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
 

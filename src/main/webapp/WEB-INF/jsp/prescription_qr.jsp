@@ -20,11 +20,11 @@
     <!-- Bootstrap core CSS -->
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/css/history.css" />" rel="stylesheet">
+    <link href="<c:url value="/resources/css/cart.css" />" rel="stylesheet">
 
     <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css"/>" rel="stylesheet">
 
-    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.min.css"/>" rel="stylesheet">
+    <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.css"/>" rel="stylesheet">
 
     <title>Prescription QR</title>
 </head>
@@ -81,7 +81,7 @@
 
     <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
 
-    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.min.js"/>"></script>
+    <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.js"/>"></script>
 
     <!-- Bootstrap core JavaScript -->
     <script src="<c:url value="/resources/vendor/jquery/js/jquery-3.3.1.min.js" />"></script>

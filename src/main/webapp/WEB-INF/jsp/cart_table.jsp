@@ -34,7 +34,7 @@
                 <td><% out.print( prescriptionMedicines.get(i).getCategory() ); %></td>
                 <td><% out.print( prescriptionMedicines.get(i).getPrice() * ( cartMedicineList.get(i).getQuantity() ) ); %> L.E</td>
                 <td><input type="number" title="medicine_quantity" id="medicine_quantity_${loopCounter.index}" value="<% out.print( cartMedicineList.get(i).getQuantity() ); %>" onchange="setMedicineQuantity('<c:out value="${cartMedicine.medicine_id}"/>', parseInt($('#medicine_quantity_${loopCounter.index}').val()))" /></td>
-                <td><button class="btn btn-danger" onclick="deleteMedicine('<% out.print( prescriptionMedicines.get(i).getName() ); %>', '<c:out value="${cartMedicine.medicine_id}"/>')">Remove</button></td>
+                <td><a class="remove" href="#"><span class="fas fa-minus fa-lg" onclick="deleteMedicine('<% out.print( prescriptionMedicines.get(i).getName() ); %>', '<c:out value="${cartMedicine.medicine_id}"/>')"></span></a></td>
             </tr>
         <%
             total_price += prescriptionMedicines.get(i).getPrice() * ( cartMedicineList.get(i).getQuantity() );
