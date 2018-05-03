@@ -22,8 +22,6 @@
 
     <link href="<c:url value="/resources/css/cart.css" />" rel="stylesheet">
 
-    <link href="<c:url value="/resources/vendor/bootstrap/css/bootstrap.css"/>" rel="stylesheet">
-
     <link href="<c:url value="/resources/vendor/jquery/css/jquery-ui.css"/>" rel="stylesheet">
 
     <title>Prescription QR</title>

@@ -93,6 +93,7 @@
         <div class="col-lg-12 my-auto">
             <div class="header-content mx-auto">
                 <div class="col-md-12 text-center">
+                    <br><br><br>
                     <form:form action="/commit_cart" method="post" modelAttribute="history" >
 
                         <form:hidden path="id"/>
@@ -178,9 +179,8 @@
                     .done(function (data, status, xhr) {
                         console.log("success deleting");
                         if (document.getElementById("prescription_medicines").getElementsByTagName("tr").length === 1)
-                            history.back();
-                        else
-                            loadData();
+                            window.history.go(-2);
+                        loadData();
                     });
             }
         }

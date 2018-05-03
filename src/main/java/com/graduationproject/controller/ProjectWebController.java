@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 import net.glxn.qrgen.QRCode;
@@ -277,23 +278,24 @@ public class ProjectWebController {
         Patient patient = (Patient) session.getAttribute("patient");
         try {
 
-            if ((boolean)session.getAttribute("registered_patient")) {
+            List<CartMedicine> cartMedicines = (List<CartMedicine>) session.getAttribute("cart_medicines");
+            System.out.println("in commit cart the cart medicines size: " + cartMedicines.size());//TODO: delete print
 
-                RestTemplate restTemplate = new RestTemplate();
-                Gson gson = new Gson();
-                ResponseEntity<String> responseEntity = restTemplate.postForEntity(API_CONTROLLER_LINK + "accessPatient", patient, String.class);
-                if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                    if (gson.fromJson(responseEntity.getBody(), PatientResponse.class).getSuccess() == 1) {
+            if (cartMedicines.size() > 0) {
+                if ((boolean)session.getAttribute("registered_patient")) {
 
-                        Prescription prescription = new Prescription();
-                        prescription.setPrescription_date(new Date().getTime());
-                        prescription.setHistory_id(history.getId());
-                        prescription.setPatient_id(patient.getId());
-                        prescription.setPrice(0.0);
+                    RestTemplate restTemplate = new RestTemplate();
+                    Gson gson = new Gson();
+                    ResponseEntity<String> responseEntity = restTemplate.postForEntity(API_CONTROLLER_LINK + "accessPatient", patient, String.class);
+                    if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+                        if (gson.fromJson(responseEntity.getBody(), PatientResponse.class).getSuccess() == 1) {
 
-                        List<CartMedicine> cartMedicines = (List<CartMedicine>) session.getAttribute("cart_medicines");
-                        if (cartMedicines.size() > 0) {
-                            System.out.println("in commit cart the cart medicines size: " + cartMedicines.size());//TODO: delete print
+                            Prescription prescription = new Prescription();
+                            prescription.setPrescription_date(new Date().getTime());
+                            prescription.setHistory_id(history.getId());
+                            prescription.setPatient_id(patient.getId());
+                            prescription.setPrice(0.0);
+
                             /** declaration of the json objects **/
                             JSONObject prescriptionJsonObject = new JSONObject(prescription);
                             JSONObject patientJsonObject = new JSONObject(patient);
@@ -324,34 +326,36 @@ public class ProjectWebController {
                             // return something went wrong when parsing the json
                             System.out.println("return something went wrong when parsing the json");//TODO: delete print
                             return new ModelAndView("redirect:/" + "patient_profile/" + patient.getUsername());
-                        } else {
-                            System.out.println("return the cart medicines is empty");//TODO: delete print
-                            return new ModelAndView("redirect:/" + "patient_profile/" + patient.getUsername());
                         }
+                        //return you are no longer have access for this patient
+                        System.out.println("return you are no longer have access for this patient");//TODO: delete print
+                        return new ModelAndView("redirect:/" + "access_patient");
                     }
                     //return you are no longer have access for this patient
                     System.out.println("return you are no longer have access for this patient");//TODO: delete print
                     return new ModelAndView("redirect:/" + "access_patient");
                 }
-                //return you are no longer have access for this patient
-                System.out.println("return you are no longer have access for this patient");//TODO: delete print
-                return new ModelAndView("redirect:/" + "access_patient");
+
+                JSONArray cartMedicinesJsonArray = new JSONArray(cartMedicines);
+                JSONObject mainJsonObject = new JSONObject();
+                mainJsonObject.put("cartMedicines", cartMedicinesJsonArray);
+
+                RestTemplate restTemplate = new RestTemplate();
+                System.out.println("json that will send to eb service: " + mainJsonObject.toString()); //TODO: delete print
+                String prescriptionDetails = restTemplate.postForObject(API_CONTROLLER_LINK + "getPrescriptionDetails", mainJsonObject.toString(), String.class);
+
+                //return the string of QR
+                System.out.println("prescription details: " + prescriptionDetails);//TODO: delete print
+                System.out.println("return the string of QR");//TODO: delete print
+                session.setAttribute("prescription_qr", Base64.encode(QRCode.from(prescriptionDetails).to(ImageType.PNG).withSize(500, 500).stream().toByteArray()));
+                return new ModelAndView("redirect:/" + "prescription_qr");
+            } else {
+                System.out.println("return the cart medicines is empty");//TODO: delete print
+                if ((boolean)session.getAttribute("registered_patient"))
+                    return new ModelAndView("redirect:/" + "patient_profile/" + patient.getUsername());
+                else
+                    return new ModelAndView("redirect:/" + "on_the_move_prescription/");
             }
-
-            List<CartMedicine> cartMedicines = (List<CartMedicine>) session.getAttribute("cart_medicines");
-            JSONArray cartMedicinesJsonArray = new JSONArray(cartMedicines);
-            JSONObject mainJsonObject = new JSONObject();
-            mainJsonObject.put("cartMedicines", cartMedicinesJsonArray);
-
-            RestTemplate restTemplate = new RestTemplate();
-            System.out.println("json that will send to eb service: " + mainJsonObject.toString()); //TODO: delete print
-            String prescriptionDetails = restTemplate.postForObject(API_CONTROLLER_LINK + "getPrescriptionDetails", mainJsonObject.toString(), String.class);
-
-            //return the string of QR
-            System.out.println("prescription details: " + prescriptionDetails);//TODO: delete print
-            System.out.println("return the string of QR");//TODO: delete print
-            session.setAttribute("prescription_qr", Base64.encode(QRCode.from(prescriptionDetails).to(ImageType.PNG).withSize(500, 500).stream().toByteArray()));
-            return new ModelAndView("redirect:/" + "prescription_qr");
 
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -407,7 +411,21 @@ public class ProjectWebController {
         RestTemplate restTemplate = new RestTemplate();
         Gson gson = new Gson();
 
-        List<Medicine> medicines = gson.fromJson(restTemplate.getForEntity(API_CONTROLLER_LINK + "getMedicinesList", String.class).getBody(), MedicineResponse.class).getMedicines();
+        List<Medicine> medicines = new ArrayList<>();
+        Enumeration attributeNames = session.getAttributeNames();
+        while (attributeNames.hasMoreElements()) {
+            if (((String)attributeNames.nextElement()).equals("medicines_list")) {
+                medicines = ((List<Medicine>) session.getAttribute("medicines_list"));
+                break;
+            }
+        }
+        if (medicines.isEmpty()) {
+            try {
+                medicines = gson.fromJson(restTemplate.getForEntity(API_CONTROLLER_LINK + "getMedicinesList", String.class).getBody(), MedicineResponse.class).getMedicines();
+                session.setAttribute("medicines_list", medicines);
+            } catch (NullPointerException e) {
+            }
+        }
         try {
             for (Medicine medicine_prescription : ((List<Medicine>)session.getAttribute("prescription_medicines"))) {
                 for (Medicine medicine : medicines) {

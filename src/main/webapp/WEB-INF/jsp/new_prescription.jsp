@@ -90,7 +90,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    <button type="submit" class="btn btn-block btn-info" id="done_search">Next</button>>
+                    <button type="submit" class="btn btn-block btn-info" id="done_search">Next</button>
                     </div>
                 </div>
             </div>
