@@ -68,9 +68,10 @@
 
                         <div class="panel panel-default">
                             <!-- Default panel contents -->
-                            <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription </span></div>
+                            <div class="panel-heading" align="center"><span class="lead">Current Prescription</span></div>
                             <br>
-                            <div id="load_me"><jsp:include page="cart_table.jsp"/></div>
+                            <div class="table-div" id="load_me"><jsp:include page="cart_table.jsp"/></div>
+                            <br>
                         </div>
                 <c:choose>
                     <c:when test="${not empty history}">
@@ -93,12 +94,12 @@
         <div class="col-lg-12 my-auto">
             <div class="header-content mx-auto">
                 <div class="col-md-12 text-center">
-                    <br><br><br>
+                    <br><br>
                     <form:form action="/commit_cart" method="post" modelAttribute="history" >
 
                         <form:hidden path="id"/>
                         <div class="form-group">
-                            <label class="col-form-label-lg" for="history_description" style="font-weight: bold; font-size: large">Add to History</label>
+                            <div class="panel-heading" align="center"><span class="lead">Add to History</span></div>
                             <br>
                             <form:textarea type="text" class="form-control" id="history_description" path="description" rows="3" cols="5" placeholder="New case to add to history..." style="max-height: 200px;" required="true"/>
                         </div>
@@ -139,7 +140,6 @@
 
     <!-- Custom scripts for this template -->
     <script src="<c:url value="/resources/js/new-age.min.js" />"></script>
-
 
     <script type="text/javascript">
 

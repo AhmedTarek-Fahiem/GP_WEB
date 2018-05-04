@@ -34,7 +34,7 @@
             <a class="navbar-brand js-scroll-trigger" href="#page-top">Patient Access</a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
-                <i class="fa fa-bars"></i>
+                <i class="fas fa-bars fa-sm"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
@@ -51,7 +51,7 @@
         </div>
     </nav>
 
-    <section class="masthead">
+    <section class="masthead" id="access">
         <div class="container h-100">
             <div class="row h-100">
                 <div class="col-lg-10 my-auto">

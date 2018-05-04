@@ -73,50 +73,52 @@
                     <div class="header-content mx-auto">
                         <div class="panel panel-default">
                             <!-- Default panel contents -->
-                            <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Medical History </span></div>
+                            <div class="panel-heading" align="center"><span class="lead">Current Medical History </span></div>
                             <br>
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Medicines</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <c:choose>
-                                    <c:when test="${empty patient_details}">
-                                        <tr>
-                                            <td>---</td>
-                                            <td>---</td>
-                                            <td>---</td>
-                                        </tr>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:forEach items="${patient_details}" var="prescription" >
+                            <div class="table-div">
+                                <table class="table table-hover table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Medicines</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:choose>
+                                        <c:when test="${empty patient_details}">
                                             <tr>
-                                                <td>${prescription.prescription_date}</td>
-                                                <td>
-                                                    <div align="left">
-                                                        <ul>
-                                                            <c:forEach items="${prescription.medicines}" var="medicine">
-                                                                <li>${medicine.name}</li>
-                                                            </c:forEach>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                                <td align="left">${prescription.prescription_description}</td>
+                                                <td>---</td>
+                                                <td>---</td>
+                                                <td>---</td>
                                             </tr>
-                                        </c:forEach>
-                                    </c:otherwise>
-                                </c:choose>
-                                </tbody>
-                            </table>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:forEach items="${patient_details}" var="prescription" >
+                                                <tr>
+                                                    <td>${prescription.prescription_date}</td>
+                                                    <td>
+                                                        <div align="left">
+                                                            <ul>
+                                                                <c:forEach items="${prescription.medicines}" var="medicine">
+                                                                    <li>${medicine.name}</li>
+                                                                </c:forEach>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td align="left">${prescription.prescription_description}</td>
+                                                </tr>
+                                            </c:forEach>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    </tbody>
+                                </table>
                             <c:if test="${not empty fetch_details_error}">
                                 <div class="alert alert-danger">
                                     <p align="center">${fetch_details_error}</p>
                                 </div>
                             </c:if>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,28 +140,31 @@
                     </c:if>
                     <input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: large"/>
                 </div>
-                <br><br>
+                <br>
                 <div class="panel panel-default">
                     <!-- Default panel contents -->
-                    <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription </span></div>
+                    <div class="panel-heading" align="center"><span class="lead">Current Prescription</span></div>
                     <br>
-                    <table class="table table-hover" id="medicines">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                        </tr>
-                        </thead>
-                        <tbody id="prescription_medicines">
-                            <tr>
-                                <td>---</td>
-                                <td>---</td>
-                                <td>---</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-div">
+                        <table class="table table-hover table-bordered table-striped" id="medicines">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prescription_medicines">
+                                <tr>
+                                    <td>---</td>
+                                    <td>---</td>
+                                    <td>---</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <br/>
                 <input type="submit" class="btn btn-block btn-primary btn-info" id="done_search" value="Next" />
             </div>
         </div>
@@ -185,7 +190,6 @@
     <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
 
     <script defer src="<c:url value="/resources/vendor/jquery/js/jquery-ui.js"/>"></script>
-
 
     <script type="text/javascript">
 

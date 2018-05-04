@@ -41,7 +41,7 @@ import net.glxn.qrgen.QRCode;
 public class ProjectWebController {
 
 
-    private final String API_CONTROLLER_LINK = "http://localhost:8080/api/";
+    private final String API_CONTROLLER_LINK = "http://localhost/api/";
 
 
     @Autowired

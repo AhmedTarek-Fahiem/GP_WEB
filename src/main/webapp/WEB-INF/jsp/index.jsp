@@ -42,10 +42,10 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
         <div class="container">
-            <a class="navbar-brand js-scroll-trigger" href="#page-top">Graduation</a>
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">Elixir</a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
-                <i class="fa fa-bars"></i>
+                <i class="fas fa-bars fa-sm"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
@@ -69,7 +69,7 @@
             <div class="row h-100">
                 <div class="col-lg-7 my-auto">
                     <div class="header-content mx-auto">
-                        <h1 class="mb-5">..... is your smart medical companion anywhere!</h1>
+                        <h1 class="mb-5">Elixir is your smart medical companion anywhere!</h1>
                         <a href="#download" class="btn btn-outline btn-xl js-scroll-trigger">Start Now for Free!</a>
                     </div>
                 </div>
@@ -171,6 +171,8 @@
             <p>&copy; Graduation 2018. All Rights Reserved</p>
         </div>
     </footer>
+
+    <script defer src="<c:url value="/resources/vendor/font-awesome/js/fontawesome-all.min.js"/>"></script>
 
     <script src="<c:url value="/resources/vendor/jquery/js/jquery-3.3.1.min.js" />"></script>
     <script src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js" />"></script>

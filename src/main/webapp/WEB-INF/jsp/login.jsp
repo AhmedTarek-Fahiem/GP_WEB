@@ -59,8 +59,8 @@
                             <label class="input-group-addon" for="password"><i class="fa fa-lock"></i></label>
                             <input type="password" class="form-control login-input" id="password" name="password" placeholder="Password" required>
                         </div>
-                        <div class="input-group input-sm">
-                            <div class="checkbox">
+                        <div>
+                            <div class="checkbox text-center">
                                 <label><input type="checkbox" id="rememberme" name="remember-me"> Remember Me</label>
                             </div>
                         </div>

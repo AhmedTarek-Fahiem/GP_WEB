@@ -37,7 +37,7 @@
             <a class="navbar-brand js-scroll-trigger" href="#page-top">Cart</a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
-                <i class="fa fa-bars"></i>
+                <i class="fas fa-bars fa-sm"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
@@ -68,29 +68,32 @@
                         </c:if>
                         <input class="form-control" id="search_medicine" type="text" placeholder="Medicine name" style="font-weight: bold; font-size: large"/>
                         </div>
-                        <br><br>
+                        <br>
                         <div class="panel panel-default">
                             <!-- Default panel contents -->
-                            <div class="panel-heading" align="center"><span class="lead" style="font-weight: bold; font-size: large">Current Prescription</span></div>
+                            <div class="panel-heading" align="center"><span class="lead">Current Prescription</span></div>
                             <br>
-                            <table class="table table-hover" id="medicines">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Category</th>
-                                    <th>Price</th>
-                                </tr>
-                                </thead>
-                                <tbody id="prescription_medicines">
-                                <tr>
-                                    <td>---</td>
-                                    <td>---</td>
-                                    <td>---</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <div class="table-div">
+                                <table class="table table-hover table-bordered table-striped" id="medicines">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="prescription_medicines">
+                                    <tr>
+                                        <td>---</td>
+                                        <td>---</td>
+                                        <td>---</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    <button type="submit" class="btn btn-block btn-info" id="done_search">Next</button>
+                        <br/>
+                        <button type="submit" class="btn btn-block btn-info" id="done_search">Next</button>
                     </div>
                 </div>
             </div>
