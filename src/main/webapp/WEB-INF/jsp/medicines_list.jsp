@@ -11,32 +11,46 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Home Page</title>
+    <title>Admin Page</title>
 </head>
 <body>
 
 <div align="center">
     <h1>Medicine List</h1>
+    <h3>
+        <a href="/admin/newMedicine">New Medicine</a>
+    </h3>
     <table border="1">
 
-        <th>Medicine ID</th>
-        <th>Medicine Name</th>
-        <th>Medicine Category</th>
-        <th>Medicine Form</th>
-        <th>Medicine Active Ingredients</th>
-        <th>Medicine Price</th>
-        <th>Medicine Quantity</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Form</th>
+        <th>Active Ingredients</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Is Restricted</th>
+        <th>Z</th>
+        <th>X</th>
+        <th>Y</th>
+        <th></th>
 
-        <c:forEach var="medicine" items="${listMedicine}">
+        <c:forEach var="medicine" items="${medicines_list}">
             <tr>
 
                 <td>${medicine.id}</td>
-                <td>${medicine.name}</td>
+                <td style="font-weight: bold">${medicine.name}</td>
                 <td>${medicine.category}</td>
                 <td>${medicine.form}</td>
                 <td>${medicine.active_ingredients}</td>
                 <td>${medicine.price}</td>
                 <td>${medicine.quantity}</td>
+                <td>${medicine.isRestricted}</td>
+                <td>${medicine.z}</td>
+                <td>${medicine.x}</td>
+                <td>${medicine.y}</td>
+                <td><a href="/admin/editMedicine/${medicine.id}">Edit</a>
+                    <a href="/admin/deleteMedicine/${medicine.id}">Delete</a></td>
 
             </tr>
         </c:forEach>

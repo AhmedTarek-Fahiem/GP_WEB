@@ -75,38 +75,14 @@ public class ProjectAPIController {
             return ResponseEntity.badRequest().body(new MedicineResponse(0, null));
     }
 
-    @RequestMapping(value = "/newMedicine", method = RequestMethod.GET)
-    public ModelAndView newMedicine(ModelAndView model) {
-        Medicine medicine = new Medicine();
-        model.addObject("medicine", medicine);
-        model.setViewName("MedicineForm");
-        return model;
-    }
-
-    @RequestMapping(value = "/editMedicine/{id}", method = RequestMethod.GET)
-    public ModelAndView editMedicine(@PathVariable(value = "id") UUID medicine_id) {
-        Medicine medicine = medicineService.getMedicine(medicine_id.toString());
-        ModelAndView model = new ModelAndView("MedicineForm");
-        model.addObject("medicine", medicine);
-        return model;
-    }
-
-    @RequestMapping(value = "/saveMedicine", method = RequestMethod.POST)
-    public ModelAndView saveMedicine(@ModelAttribute Medicine medicine) {
-        if (medicine.getId() == null) {
-            medicineService.addMedicine(medicine);
-        } else {
+    @RequestMapping(value = "/updateMedicineQuantity", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity updateMedicineQuantity(@RequestBody Medicine medicine) {
+        try {
             medicineService.updateMedicine(medicine);
+            return  ResponseEntity.ok().build();
+        } catch (NullPointerException | PropertyValueException | NonUniqueResultException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return new ModelAndView("redirect:/");
-    }
-
-    @RequestMapping(value = "/deleteMedicine/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity deleteMedicine(@PathVariable(value = "id") UUID medicine_id) {
-        if (medicineService.deleteMedicine(medicine_id.toString()))
-            return ResponseEntity.ok().body(new MedicineResponse(1, null));
-        else
-            return ResponseEntity.badRequest().body(new MedicineResponse(0, null));
     }
 
     /**-----------------------------------------------**/

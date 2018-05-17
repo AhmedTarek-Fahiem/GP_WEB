@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
@@ -24,15 +25,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.crypto.*;
+import javax.crypto.spec.DESKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.*;
 
 import net.glxn.qrgen.QRCode;
 
@@ -53,6 +57,43 @@ public class ProjectWebController {
 
     /**-----------------------------------------------**/
 
+    @RequestMapping(value = "/encrypt", method = RequestMethod.GET)
+    public void encrypt() {
+        try {
+
+//            456c697865725f5152202d676f6f64206a6f6220666f7220627265616b696e67207468697320656e6372797074696f6e2d
+//            456c697869725f5152
+            byte[] keyBytes = DatatypeConverter.parseHexBinary("456c697869725f5152");
+            SecretKey secretKey = SecretKeyFactory.getInstance("DES").generateSecret(new DESKeySpec(keyBytes));
+
+
+            Cipher eCipher;
+            Cipher dCipher;
+
+            eCipher = Cipher.getInstance("DES");
+            eCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+            dCipher = Cipher.getInstance("DES");
+            dCipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+            String s = "Don't tell anybody!";
+
+
+            String encrypted;
+            encrypted = new sun.misc.BASE64Encoder().encode(eCipher.doFinal(s.getBytes("UTF8")));
+
+            System.out.println("Encrypted: " + encrypted);
+
+            byte[] utf8 = dCipher.doFinal(new sun.misc.BASE64Decoder().decodeBuffer(encrypted));
+            System.out.println("Decrypted: " + new String(utf8, "UTF8"));
+
+
+
+        } catch (NoSuchAlgorithmException|NoSuchPaddingException|InvalidKeyException|BadPaddingException|IllegalBlockSizeException|InvalidKeySpecException|IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @RequestMapping(value = "/access_denied", method = RequestMethod.GET)
     public String accessDeniedPage(ModelMap model) {
         model.addAttribute("logged_in_user", getPrincipal());
@@ -68,8 +109,22 @@ public class ProjectWebController {
             return modelAndView;
         } else {
             System.out.println("login method logged-in user");//TODO: delete print code
-            return new ModelAndView("redirect:/" + "access_patient");
+            return new ModelAndView("redirect:/" + "logged_in");
         }
+    }
+
+    @RequestMapping(value = "/logged_in", method = RequestMethod.GET)
+    public ModelAndView loggedIn() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        for (GrantedAuthority grantedAuthority : authorities) {
+            System.out.println("authority: " + grantedAuthority.getAuthority());
+            if (grantedAuthority.getAuthority().equals("ROLE_USER"))
+                return new ModelAndView("redirect:/access_patient");
+            else if (grantedAuthority.getAuthority().equals("ROLE_ADMIN"))
+                return new ModelAndView("redirect:/admin");
+        }
+        return new ModelAndView("redirect:/login");
     }
 
     @RequestMapping(value = "/access_patient", method = RequestMethod.GET)

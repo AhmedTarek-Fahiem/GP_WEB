@@ -48,7 +48,6 @@
                 </ul>
             </div>
         </div>
-        </div>
     </nav>
 
     <section class="masthead" id="access">

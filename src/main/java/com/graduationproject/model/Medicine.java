@@ -1,6 +1,7 @@
 package com.graduationproject.model;
 
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -34,6 +35,22 @@ public class Medicine {
 
     @Column(columnDefinition = "INTEGER(11)", nullable = false, unique = true)
     private int quantity;
+
+    @Column(columnDefinition = "INTEGER(1)", nullable = false)
+    @ColumnDefault("0")
+    private int isRestricted;
+
+    @Column(columnDefinition = "INTEGER(2)")
+    @ColumnDefault("0")
+    private int z;
+
+    @Column(columnDefinition = "INTEGER(2)")
+    @ColumnDefault("0")
+    private int x;
+
+    @Column(columnDefinition = "INTEGER(2)")
+    @ColumnDefault("0")
+    private int y;
 
 
 
@@ -91,5 +108,37 @@ public class Medicine {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getIsRestricted() {
+        return isRestricted;
+    }
+
+    public void setIsRestricted(int isRestricted) {
+        this.isRestricted = isRestricted;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }
