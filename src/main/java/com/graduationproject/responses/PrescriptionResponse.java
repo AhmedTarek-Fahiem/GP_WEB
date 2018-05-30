@@ -5,12 +5,12 @@ import java.util.List;
 public class PrescriptionResponse {
 
     private List<PrescriptionResultResponse> result;
-    private int success_cart;
+    private int success_sync_offline;
     private int success_prescription;
 
-    public PrescriptionResponse(List<PrescriptionResultResponse> result, int success_cart, int success_prescription) {
+    public PrescriptionResponse(List<PrescriptionResultResponse> result, int success_sync_offline, int success_prescription) {
         this.result = result;
-        this.success_cart = success_cart;
+        this.success_sync_offline = success_sync_offline;
         this.success_prescription = success_prescription;
     }
 
@@ -22,12 +22,12 @@ public class PrescriptionResponse {
         this.result = result;
     }
 
-    public int getSuccess_cart() {
-        return success_cart;
+    public int getSuccess_sync_offline() {
+        return success_sync_offline;
     }
 
-    public void setSuccess_cart(int success_cart) {
-        this.success_cart = success_cart;
+    public void setSuccess_sync_offline(int success_sync_offline) {
+        this.success_sync_offline = success_sync_offline;
     }
 
     public int getSuccess_prescription() {

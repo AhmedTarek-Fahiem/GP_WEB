@@ -20,8 +20,8 @@ public class PrescriptionDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Prescription> getAllPrescriptions(String patient_id) {
-        return sessionFactory.getCurrentSession().createQuery("from Prescription prescription where prescription.patient_id = :patient_id").setString("patient_id", patient_id).list();
+    public List<Prescription> getAllPrescriptions(String patient_id, long from_date) {
+        return sessionFactory.getCurrentSession().createQuery("from Prescription prescription where prescription.patient_id = :patient_id and prescription.prescription_date > :prescription_date").setString("patient_id", patient_id).setLong("prescription_date", from_date).list();
     }
 
     public Prescription getPrescription(String prescription_id) {

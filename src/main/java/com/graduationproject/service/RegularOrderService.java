@@ -17,6 +17,11 @@ public class RegularOrderService {
     private RegularOrderDao regularOrderDao;
 
     @Transactional
+    public void addRegularOrder(RegularOrder regularOrder) {
+        regularOrderDao.addRegularOrder(regularOrder);
+    }
+
+    @Transactional
     public void addRegularOrders(List<RegularOrder> regularOrders) {
         regularOrderDao.addRegularOrders(regularOrders);
     }
@@ -24,5 +29,10 @@ public class RegularOrderService {
     @Transactional
     public List<RegularOrder> getAllRegularOrders(String patient_id) {
         return regularOrderDao.getAllRegularOrders(patient_id);
+    }
+
+    @Transactional
+    public List<RegularOrder> getPrescriptionRegularOrders(String prescription_id) {
+        return regularOrderDao.getPrescriptionRegularOrders(prescription_id);
     }
 }

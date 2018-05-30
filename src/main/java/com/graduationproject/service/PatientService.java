@@ -30,8 +30,8 @@ public class PatientService {
     }
 
     @Transactional
-    public int checkPatient(String username, String email) {
-        return patientDao.checkPatient(username, email);
+    public int verifyPatient(String username, String email) {
+        return patientDao.verifyPatient(username, email);
     }
 
     @Transactional

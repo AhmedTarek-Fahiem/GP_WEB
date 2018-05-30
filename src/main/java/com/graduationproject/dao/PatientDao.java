@@ -32,7 +32,7 @@ public class PatientDao {
     }
 
     @SuppressWarnings("unchecked")
-    public int checkPatient(String username, String email) {
+    public int verifyPatient(String username, String email) {
         List<Patient> patients = sessionFactory.getCurrentSession().createQuery("from Patient patient where patient.username = :username or patient.email = :email").setString("username", username).setString("email", email).list();
         if (patients.size() > 0) {
             if (patients.get(0).getEmail().equals(email))

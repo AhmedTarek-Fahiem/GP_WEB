@@ -23,8 +23,8 @@ public class PrescriptionService {
     }
 
     @Transactional
-    public List<Prescription> getAllPrescriptions(String patient_id) {
-        return prescriptionDao.getAllPrescriptions(patient_id);
+    public List<Prescription> getAllPrescriptions(String patient_id, long from_date) {
+        return prescriptionDao.getAllPrescriptions(patient_id, from_date);
     }
 
     @Transactional

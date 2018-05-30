@@ -15,6 +15,10 @@ public class RegularOrderDao {
     @Autowired
     private SessionFactory sessionFactory;
 
+    public void addRegularOrder(RegularOrder regularOrder) {
+        sessionFactory.getCurrentSession().saveOrUpdate(regularOrder);
+    }
+
     public void addRegularOrders(List<RegularOrder> regularOrders) {
         regularOrders.forEach(regularOrder -> sessionFactory.getCurrentSession().saveOrUpdate(regularOrder));
     }
@@ -22,5 +26,10 @@ public class RegularOrderDao {
     @SuppressWarnings("unchecked")
     public List<RegularOrder> getAllRegularOrders(String patient_id) {
         return sessionFactory.getCurrentSession().createQuery("from RegularOrder regularOrder where regularOrder.patient_id = :patient_id").setString("patient_id", patient_id).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<RegularOrder> getPrescriptionRegularOrders(String prescription_id) {
+        return sessionFactory.getCurrentSession().createQuery("from RegularOrder regularOrder where regularOrder.prescription_id = :prescription_id").setString("prescription_id", prescription_id).list();
     }
 }

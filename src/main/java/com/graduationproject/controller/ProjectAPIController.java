@@ -51,6 +51,8 @@ public class ProjectAPIController {
     @Autowired
     private VersionService versionService;
 
+    private static final String SELF_HISTORY_ID = "0395e1e0-c60b-4564-8dea-e92fb83bb9ea";
+
 
     /**-----------------------------------------------**/
 
@@ -87,12 +89,12 @@ public class ProjectAPIController {
 
     /**-----------------------------------------------**/
 
-    @RequestMapping(value = "/checkPatient", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity checkPatient(@RequestBody Patient patient) {
+    @RequestMapping(value = "/verifyPatient", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity verifyPatient(@RequestBody Patient patient) {
         try {
             if (patient.getUsername() != null && patient.getEmail() != null) {
                 List<ErrorResponse> errorResponses = new ArrayList<>();
-                errorResponses.add(new ErrorResponse(patientService.checkPatient(patient.getUsername(), patient.getEmail())));
+                errorResponses.add(new ErrorResponse(patientService.verifyPatient(patient.getUsername(), patient.getEmail())));
                 return ResponseEntity.ok().body(new ResultErrorResponse(errorResponses));
             }
             return ResponseEntity.badRequest().body(new ResultErrorResponse(null));
@@ -176,32 +178,70 @@ public class ProjectAPIController {
 
     /**-----------------------------------------------**/
 
-    @RequestMapping(value = "/getPrescriptions", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity getPrescriptions(@RequestBody Patient patient) {
-
+    @RequestMapping(value = "/sync", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity sync(@RequestBody String jsonParser) {
         try {
-            List<Prescription> prescriptions = prescriptionService.getAllPrescriptions(patient.getId());
-            if (prescriptions.size() == 0) {
-                return ResponseEntity.ok().body(new PrescriptionResponse(null, 1 , 1));
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            JsonNode root = objectMapper.readTree(jsonParser);
+
+            JsonNode patientJson = root.path("patient");
+            if (patientJson.isMissingNode()) {
+                return ResponseEntity.badRequest().body(new PrescriptionResponse(null, 0 , 0));
             } else {
-                List<CartMedicine> cart_medicines = new ArrayList<>();
-                for (Prescription prescription: prescriptions) {
-//                    cartMedicineService.getAllCartMedicines(prescription.getId()).forEach(cart_medicines::add);
-//                    cartMedicineService.getAllCartMedicines(prescription.getId()).forEach(cart_medicine -> cart_medicines.add(cart_medicine));
-                    cart_medicines.addAll(cartMedicineService.getAllCartMedicines(prescription.getId()));
-                }
-                List<RegularOrder> regular_orders = regularOrderService.getAllRegularOrders(patient.getId());
+                if (patientJson.get("id").isNull())
+                    return ResponseEntity.badRequest().body(new PrescriptionResponse(null, 0 , 0));
+                Patient patient = patientService.getPatient(patientJson.get("id").asText());
+                if (patient == null)
+                    return ResponseEntity.badRequest().body(new PrescriptionResponse(null, 0 , 0));
+
+                int success_prescription, success_sync_offline = 1;
+
+                long lastUpdate;
+                if (root.has("lastUpdate"))
+                    lastUpdate = (root.get("lastUpdate").isLong()) ? root.get("lastUpdate").asLong() : 0;
+                else
+                    lastUpdate = 0;
+
                 List<PrescriptionResultResponse> prescriptionResultResponses = new ArrayList<>();
-                prescriptionResultResponses.add(new PrescriptionResultResponse(cart_medicines, prescriptions, regular_orders == null ? 0 : 1, regular_orders));
-                return ResponseEntity.ok().body(new PrescriptionResponse(prescriptionResultResponses, 1, 1));
+                List<Prescription> prescriptions = prescriptionService.getAllPrescriptions(patient.getId(), lastUpdate);
+                if (prescriptions.size() == 0) {
+                    success_prescription = 1;
+                } else {
+                    List<RegularOrder> regular_orders;
+                    for (Prescription prescription: prescriptions) {
+                        regular_orders = regularOrderService.getPrescriptionRegularOrders(prescription.getId());
+                        prescriptionResultResponses.add(new PrescriptionResultResponse(prescription, cartMedicineService.getAllCartMedicines(prescription.getId()), regular_orders == null ? 0 : 1, regular_orders, historyService.getHistory(prescription.getHistory_id())));
+                    }
+                    success_prescription = 1;
+                }
+
+                JsonNode prescriptionsJsonArray = root.path("prescriptions");
+                if (!prescriptionsJsonArray.isMissingNode() && !prescriptionsJsonArray.isNull() && prescriptionsJsonArray.isArray() && prescriptionsJsonArray.size() > 0) {
+                    ResponseEntity<ResultSuccessResponse> responseEntity;
+                    for (JsonNode prescriptionJson :
+                            prescriptionsJsonArray) {
+
+                        responseEntity = setPrescription(prescriptionJson.toString(), false);
+                        success_sync_offline = (success_sync_offline == 0)?
+                                success_sync_offline : success_sync_offline & responseEntity.getBody().getSuccess().get(0).getSuccess_prescription()
+                                                                            & responseEntity.getBody().getSuccess().get(0).getSuccess_cart();
+                    }
+                }
+
+                return ResponseEntity.ok().body(new PrescriptionResponse(prescriptionResultResponses, success_sync_offline, success_prescription));
             }
-        } catch (NullPointerException | PropertyValueException | NonUniqueResultException e) {
+        } catch (NullPointerException | PropertyValueException | NonUniqueResultException | IOException e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(new PrescriptionResponse(null, 0 , 0));
         }
     }
 
     @RequestMapping(value = "/setPrescription", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity setPrescription(@RequestBody String jsonParser) {
+        return setPrescription(jsonParser, true);
+    }
+    private  @ResponseBody ResponseEntity setPrescription(@RequestBody String jsonParser, boolean checkAvailability) {
 
         System.out.println("i am in web service in set prescription"); //TODO: delete print
         System.out.println("the parser json: " + jsonParser);//TODO: delete print
@@ -230,22 +270,33 @@ public class ProjectAPIController {
                     double prescription_price = 0;
                     int i = 0;
                     String outOfStockMedicines = "";
-                    CartMedicine cartMedicine;
-                    for (JsonNode cartMedicineJson : cartMedicinesJsonArray) {
-                        cartMedicine = objectMapper.convertValue(cartMedicineJson, CartMedicine.class);
-                        cartMedicine.setPrescription_id(prescription.getId());
-                        Medicine medicine = medicineService.getMedicine(cartMedicine.getMedicine_id());
-                        if (cartMedicine.getQuantity() <= medicine.getQuantity()) {
+                    if (checkAvailability) {
+                        CartMedicine cartMedicine;
+                        for (JsonNode cartMedicineJson : cartMedicinesJsonArray) {
+                            cartMedicine = objectMapper.convertValue(cartMedicineJson, CartMedicine.class);
+                            cartMedicine.setPrescription_id(prescription.getId());
+                            Medicine medicine = medicineService.getMedicine(cartMedicine.getMedicine_id());
+                            if (cartMedicine.getQuantity() <= medicine.getQuantity()) {
+                                prescription_price += (medicine.getPrice()) * cartMedicine.getQuantity();
+                                cartMedicines.add(cartMedicine);
+
+                                prescriptionDetails += medicine.getName() + "," + cartMedicine.getQuantity();
+                                if (cartMedicinesJsonArray.size() != (++i))
+                                    prescriptionDetails += "&";
+                            } else
+                                outOfStockMedicines += medicine.getName() + " , ";
+                        }
+                    } else {
+                        CartMedicine cartMedicine;
+                        for (JsonNode cartMedicineJson : cartMedicinesJsonArray) {
+                            cartMedicine = objectMapper.convertValue(cartMedicineJson, CartMedicine.class);
+                            cartMedicine.setPrescription_id(prescription.getId());
+                            Medicine medicine = medicineService.getMedicine(cartMedicine.getMedicine_id());
                             prescription_price += (medicine.getPrice()) * cartMedicine.getQuantity();
                             cartMedicines.add(cartMedicine);
-
-                            prescriptionDetails += medicine.getName() + "," + cartMedicine.getQuantity();
-                            if (cartMedicinesJsonArray.size() != (++i))
-                                prescriptionDetails += "&";
-                        } else
-                            outOfStockMedicines += medicine.getName() + " , ";
-
+                        }
                     }
+
                     if (outOfStockMedicines.length() == 0) {
                         prescription.setPrice(prescription_price);
                         success_prescription = success_cart = 1;
@@ -258,23 +309,36 @@ public class ProjectAPIController {
                                 success_history = 1;
                                 historyService.addHistory(history);
                             } else {
-                                prescription.setHistory_id("1");
+                                prescription.setHistory_id(SELF_HISTORY_ID);
                                 success_history = 0;
                             }
 
                             prescriptionService.addPrescription(prescription);
                             cartMedicineService.addCartMedicines(cartMedicines);
 
-                            JsonNode regularOrdersJsonArray = root.path("regularOrders");
-                            if (regularOrdersJsonArray.isArray() && !regularOrdersJsonArray.isNull() && !regularOrdersJsonArray.isMissingNode()) {
-                                List<RegularOrder> regularOrders = new ArrayList<>();
-                                regularOrdersJsonArray.forEach(regularOrderJson -> regularOrders.add(objectMapper.convertValue(regularOrderJson, RegularOrder.class)));
-                                success_regular = 1;
-                                httpStatus = HttpStatus.OK;
-
-                                regularOrderService.addRegularOrders(regularOrders);
-                            } else {
-                                success_regular = 0;
+                            RegularOrder regularOrder = new RegularOrder();
+                            success_regular = 0;
+                            if (root.has("fire_time1")) {
+                                if (root.get("fire_time1").isLong()) {
+                                    regularOrder.setFire_time(root.get("fire_time1").asLong());
+                                    regularOrder.setPrescription_id(prescription.getId());
+                                    regularOrder.setPatient_id(prescription.getPatient_id());
+                                    regularOrderService.addRegularOrder(regularOrder);
+                                    success_regular = 1;
+                                    httpStatus = HttpStatus.OK;
+                                } else
+                                    success_regular = 0;
+                            }
+                            if (root.has("fire_time2")) {
+                                if (root.get("fire_time2").isLong()) {
+                                    regularOrder.setFire_time(root.get("fire_time2").asLong());
+                                    regularOrder.setPrescription_id(prescription.getId());
+                                    regularOrder.setPatient_id(prescription.getPatient_id());
+                                    regularOrderService.addRegularOrder(regularOrder);
+                                    success_regular = 1;
+                                    httpStatus = HttpStatus.OK;
+                                } else
+                                    success_regular = 0;
                             }
 
                         } catch (NullPointerException | PropertyValueException  e) {
@@ -303,7 +367,7 @@ public class ProjectAPIController {
     @RequestMapping(value = "/getPatientDetails", method = RequestMethod.POST, produces = "application/json")
     public @ResponseBody ResponseEntity getPatientDetails(@RequestBody Patient patient) {
         try {
-            List<Prescription> prescriptions = prescriptionService.getAllPrescriptions(patient.getId());
+            List<Prescription> prescriptions = prescriptionService.getAllPrescriptions(patient.getId(), 0);
             if (prescriptions.size() == 0) {
                 return ResponseEntity.ok().body(new PatientDetailsResponse(1, null));
             } else {
