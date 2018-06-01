@@ -324,8 +324,8 @@ public class ProjectWebController {
                             responseEntity = restTemplate.postForEntity(API_CONTROLLER_LINK + "setPrescription", mainJsonObject.toString(), String.class);
 
                             if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                                SuccessResponse successResponse = gson.fromJson(responseEntity.getBody(), ResultSuccessResponse.class).getSuccess().get(0);
-                                if ((successResponse.getSuccess_prescription() == 1) & (successResponse.getSuccess_cart() == 1) && (successResponse.getSuccess_history() == 1) && (successResponse.getPrescription_details() != null)) {
+                                SuccessResponse successResponse = gson.fromJson(responseEntity.getBody(), SuccessResponse.class);
+                                if ((successResponse.getSuccess() == 1) && (successResponse.getPrescription_details() != null)) {
                                     //return finally you have insert a new prescription to the patient
                                     System.out.println("prescription details: " + successResponse.getPrescription_details());//TODO: delete print
                                     System.out.println("return finally you have insert a new prescription to the patient");//TODO: delete print

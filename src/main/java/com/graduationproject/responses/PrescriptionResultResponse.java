@@ -11,17 +11,13 @@ public class PrescriptionResultResponse {
 
     private Prescription prescription;
     private List<CartMedicine> carts;
-    private int success_regular;
     private List<RegularOrder> regulars;
-    private History history;
 
 
-    public PrescriptionResultResponse(Prescription prescription, List<CartMedicine> carts, int success_regular, List<RegularOrder> regulars, History history) {
+    public PrescriptionResultResponse(Prescription prescription, List<CartMedicine> carts, List<RegularOrder> regulars) {
         this.prescription = prescription;
         this.carts = carts;
-        this.success_regular = success_regular;
         this.regulars = regulars;
-        this.history = history;
     }
 
     public Prescription getPrescription() {
@@ -40,27 +36,11 @@ public class PrescriptionResultResponse {
         this.carts = carts;
     }
 
-    public int getSuccess_regular() {
-        return success_regular;
-    }
-
-    public void setSuccess_regular(int success_regular) {
-        this.success_regular = success_regular;
-    }
-
     public List<RegularOrder> getRegulars() {
         return regulars;
     }
 
     public void setRegulars(List<RegularOrder> regulars) {
         this.regulars = regulars;
-    }
-
-    public History getHistory() {
-        return history;
-    }
-
-    public void setHistory(History history) {
-        this.history = history;
     }
 }

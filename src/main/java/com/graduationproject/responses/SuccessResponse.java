@@ -2,52 +2,22 @@ package com.graduationproject.responses;
 
 public class SuccessResponse {
 
-    private int success_prescription;
-    private int success_cart;
-    private int success_regular;
-    private int success_history;
+    private int success;
     private String prescription_details;
     private String outOfStockMedicines;
 
-    public SuccessResponse(int success_prescription, int success_cart, int success_regular, int success_history, String prescription_details, String outOfStockMedicines) {
-        this.success_prescription = success_prescription;
-        this.success_cart = success_cart;
-        this.success_regular = success_regular;
-        this.success_history = success_history;
+    public SuccessResponse(int success, String prescription_details, String outOfStockMedicines) {
+        this.success = success;
         this.prescription_details = prescription_details;
         this.outOfStockMedicines = outOfStockMedicines;
     }
 
-    public int getSuccess_prescription() {
-        return success_prescription;
+    public int getSuccess() {
+        return success;
     }
 
-    public void setSuccess_prescription(int success_prescription) {
-        this.success_prescription = success_prescription;
-    }
-
-    public int getSuccess_cart() {
-        return success_cart;
-    }
-
-    public void setSuccess_cart(int success_cart) {
-        this.success_cart = success_cart;
-    }
-
-    public int getSuccess_regular() {
-        return success_regular;
-    }
-
-    public void setSuccess_regular(int success_regular) {
-        this.success_regular = success_regular;
-    }
-
-    public int getSuccess_history() {
-        return success_history;
-    }
-
-    public void setSuccess_history(int success_history) {
-        this.success_history = success_history;
+    public void setSuccess(int success) {
+        this.success = success;
     }
 
     public String getPrescription_details() {
