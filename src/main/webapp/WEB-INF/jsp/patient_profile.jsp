@@ -172,7 +172,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; Graduation 2018. All Rights Reserved</p>
+            <p>&copy; Elixir 2018. All Rights Reserved</p>
         </div>
     </footer>
 
