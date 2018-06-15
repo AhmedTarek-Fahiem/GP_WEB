@@ -1,8 +1,8 @@
 html,
 body {
   font-family: 'Muli', 'Helvetica', 'Arial', 'sans-serif';
-  background: linear-gradient(rgba(255,255,255,0.1) , rgba(255,255,255,0.8)), url("../img/cart.jpg");
-  background: -webkit-linear-gradient(rgba(255,255,255,0.1) , rgba(255,255,255,0.8)), url("../img/cart.jpg");
+  background: linear-gradient(rgba(255,255,255,0) , rgba(255,255,255,0)), url("../img/cart.jpg");
+  background: -webkit-linear-gradient(rgba(255,255,255,0) , rgba(255,255,255,0)), url("../img/cart.jpg");
   background-size: cover;
 }
 
@@ -32,6 +32,7 @@ p {
 .table-div {
   overflow: auto;
   max-height: 500px;
+  text-align: center;
 }
 
 .table {
@@ -75,7 +76,7 @@ button {
 
 #mainNav {
   border-color: rgba(34, 34, 34, 0.05);
-  background-color: #f5f5f5;
+  background-color: #333333;
   -webkit-transition: all .35s;
   -moz-transition: all .35s;
   transition: all .35s;
