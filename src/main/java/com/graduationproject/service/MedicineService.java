@@ -34,7 +34,12 @@ public class MedicineService {
 
     @Transactional
     public Medicine updateMedicine(Medicine medicine) {
-        return medicineDao.updateEmployee(medicine);
+        return medicineDao.updateMedicine(medicine);
+    }
+
+    @Transactional
+    public int updateMedicineQuantity(String medicine_id, int medicine_quantity) {
+        return medicineDao.updateMedicineQuantity(medicine_id, medicine_quantity);
     }
 
     @Transactional

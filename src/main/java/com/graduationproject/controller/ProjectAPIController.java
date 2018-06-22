@@ -12,6 +12,7 @@ import org.hibernate.NonUniqueResultException;
 import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,9 @@ public class ProjectAPIController {
 
     @Autowired
     private VersionService versionService;
+
+    @Autowired
+    private SecurityTokenService securityTokenService;
 
     private static final String SELF_HISTORY_ID = "0395e1e0-c60b-4564-8dea-e92fb83bb9ea";
 
@@ -115,12 +119,14 @@ public class ProjectAPIController {
 //                String csrfTokenParameterName = csrfToken.getParameterName();
 //                String csrfTokenToken = csrfToken.getToken();
 //                System.out.println("Token parameter name : " + csrfTokenParameterName + "  -  Token token : " + csrfTokenToken);
-                return ResponseEntity.ok().body(new PatientResponse(1, 0, patients));
+                String token = retrievedPatient.getId() + "|" + UUID.randomUUID() + "|ELIXIR";
+                securityTokenService.updateSecurityToken(new SecurityToken(retrievedPatient.getUsername(), token, new Date()));
+                return ResponseEntity.ok().body(new PatientResponse(1, 0, patients, token));
             }
-            return ResponseEntity.ok().body(new PatientResponse(0, 1, null));
+            return ResponseEntity.ok().body(new PatientResponse(0, 1, null, null));
         } catch (NullPointerException | PropertyValueException | NonUniqueResultException e) {
             System.out.println("error login : " + e);
-            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null));
+            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null, null));
         }
     }
 
@@ -133,12 +139,14 @@ public class ProjectAPIController {
                 patient.setPassword(null);
                 List<Patient> patients = new ArrayList<>();
                 patients.add(patient);
-                return ResponseEntity.ok().body(new PatientResponse(1, 0, patients));
+                String token = patient.getId() + "|" + UUID.randomUUID() + "|ELIXIR";
+                securityTokenService.addToken(new SecurityToken(patient.getUsername(), token, new Date()));
+                return ResponseEntity.ok().body(new PatientResponse(1, 0, patients, token));
             }
-            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null));
+            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null, null));
         } catch (NullPointerException | PropertyValueException e) {
             System.out.println("error register : " + e);
-            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null));
+            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null, null));
         }
     }
 
@@ -146,17 +154,18 @@ public class ProjectAPIController {
     public @ResponseBody ResponseEntity<PatientResponse> setPIN(@RequestBody Patient patient) {
         try {
             if (patientService.setPatientPIN(patient.getUsername(), patient.getPin()))
-                return ResponseEntity.ok().body(new PatientResponse(1, 0, null));
+                return ResponseEntity.ok().body(new PatientResponse(1, 0, null, null));
             else
-                return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null));
+                return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null, null));
         } catch (NullPointerException | PropertyValueException | NonUniqueResultException e) {
-            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null));
+            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null, null));
         }
 
     }
 
     @RequestMapping(value = "/accessPatient", method = RequestMethod.POST, produces = "application/json")
     public @ResponseBody ResponseEntity accessPatient(@RequestBody Patient patient) {
+        System.out.println("In API controller with patient username " + patient.getUsername() + " and pin " + patient.getPin());
         try {
             Patient retrievedPatient = patientService.accessPatient(patient.getUsername(), patient.getPin());
 
@@ -165,12 +174,12 @@ public class ProjectAPIController {
                 retrievedPatient.setPassword(null);
                 patients.add(retrievedPatient);
                 System.out.println("retrieved patient from access patient with PIN " + retrievedPatient.getUsername() + " - " + retrievedPatient.getPin());
-                return ResponseEntity.ok().body(new PatientResponse(1, 0, patients));
+                return ResponseEntity.ok().body(new PatientResponse(1, 0, patients, null));
             }
-            return ResponseEntity.ok().body(new PatientResponse(0, 1, null));
+            return ResponseEntity.ok().body(new PatientResponse(0, 1, null, null));
         } catch (NullPointerException | PropertyValueException | NonUniqueResultException e) {
             System.out.println("error login : " + e);
-            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null));
+            return ResponseEntity.badRequest().body(new PatientResponse(0, 1, null, null));
         }
     }
 
@@ -401,9 +410,9 @@ public class ProjectAPIController {
                     for (JsonNode cartMedicineJson : cartMedicinesJsonArray) {
                         cartMedicine = objectMapper.convertValue(cartMedicineJson, CartMedicine.class);
 
-                        prescriptionDetails += medicineService.getMedicine(cartMedicine.getMedicine_id()).getName() + "," + cartMedicine.getQuantity();
+                        prescriptionDetails += medicineService.getMedicine(cartMedicine.getMedicine_id()).getName() + "#" + cartMedicine.getQuantity();
                         if (cartMedicinesJsonArray.size() != (++i))
-                            prescriptionDetails += "&";
+                            prescriptionDetails += "|";
                     }
                 }
             }
@@ -412,6 +421,29 @@ public class ProjectAPIController {
             return "";
         }
         return prescriptionDetails;
+    }
+
+    @RequestMapping(value = "finalizeOrder", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity finalizeOrder(@RequestBody String jsonParser) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            JsonNode root = objectMapper.readTree(jsonParser);
+
+            JsonNode medicinesOrdered = root.path("medicines");
+            if (!medicinesOrdered.isMissingNode() && !medicinesOrdered.isNull() && medicinesOrdered.isArray() && medicinesOrdered.size() > 0) {
+                for (JsonNode medicineOrder :
+                        medicinesOrdered) {
+                    if (medicineService.updateMedicineQuantity(medicineOrder.get("id").asText(), medicineOrder.get("quantity").asInt()) != 1)
+                        return ResponseEntity.badRequest().build();
+                }
+                return ResponseEntity.ok().body("Done");
+            }
+            return ResponseEntity.badRequest().build();
+        } catch (NullPointerException | PropertyValueException | IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     /**-----------------------------------------------**/

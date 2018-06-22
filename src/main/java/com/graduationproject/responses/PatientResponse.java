@@ -9,11 +9,13 @@ public class PatientResponse {
     private int success;
     private int error;
     private List<Patient> patients;
+    private String token;
 
-    public PatientResponse(int success, int error, List<Patient> patients) {
+    public PatientResponse(int success, int error, List<Patient> patients, String token) {
         this.success = success;
         this.error = error;
         this.patients = patients;
+        this.token = token;
     }
 
     public int getSuccess() {
@@ -38,5 +40,13 @@ public class PatientResponse {
 
     public void setPatients(List<Patient> patients) {
         this.patients = patients;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

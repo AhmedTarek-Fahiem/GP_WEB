@@ -15,25 +15,25 @@ public class Medicine {
     @Id
 //    @GeneratedValue(generator = "UUID2")
 //    @GenericGenerator(name = "UUID2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
+    @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false, unique = true)
     private String id = UUID.randomUUID().toString();
 
     @Column(columnDefinition = "TEXT", nullable = false, unique = true)
     private String name;
 
-    @Column(columnDefinition = "TEXT", nullable = false, unique = true)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String category;
 
-    @Column(columnDefinition = "TEXT", nullable = false, unique = true)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String form;
 
-    @Column(columnDefinition = "TEXT", nullable = false, unique = true)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String active_ingredients;
 
-    @Column(columnDefinition = "DOUBLE", nullable = false, unique = true)
+    @Column(columnDefinition = "DOUBLE", nullable = false)
     private double price;
 
-    @Column(columnDefinition = "INTEGER(11)", nullable = false, unique = true)
+    @Column(columnDefinition = "INTEGER(11)", nullable = false)
     private int quantity;
 
     @Column(columnDefinition = "INTEGER(1)", nullable = false)
@@ -52,7 +52,7 @@ public class Medicine {
     @ColumnDefault("0")
     private int y;
 
-
+    //getters;setters;
 
     public String getId() {
         return id;

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public class MedicineDao {
@@ -28,9 +27,13 @@ public class MedicineDao {
         return (Medicine)(sessionFactory.getCurrentSession().get(Medicine.class, medicine_id));
     }
 
-    public Medicine updateEmployee(Medicine medicine) {
+    public Medicine updateMedicine(Medicine medicine) {
         sessionFactory.getCurrentSession().update(medicine);
         return medicine;
+    }
+
+    public int updateMedicineQuantity(String medicine_id, int medicine_quantity) {
+        return sessionFactory.getCurrentSession().createQuery("update Medicine medicine set medicine.quantity = :medicine_quantity where medicine.id = :medicine_id").setInteger("medicine_quantity", medicine_quantity).setString("medicine_id", medicine_id).executeUpdate();
     }
 
     public boolean deleteMedicine(String medicine_id) {
